@@ -87,17 +87,11 @@ async function run(start: () => Promise<void>, hint?: string): Promise<void> {
 }
 
 ui.mic.addEventListener('click', () => {
-  void run(
-    () => engine.startMic(),
-    'Microphone is open. Play Spotify (or anything) on speakers, or hum a pitch into the room.',
-  )
+  void run(() => engine.startMic(), 'Mic open — play audio nearby or into the room.')
 })
 
 ui.tab.addEventListener('click', () => {
-  void run(
-    () => engine.startTab(),
-    'Share a Chrome tab with audio on — the Spotify web player works. Video is discarded.',
-  )
+  void run(() => engine.startTab(), 'Share a tab with audio. Video is discarded.')
 })
 
 ui.file.addEventListener('click', () => ui.fileInput.click())
@@ -109,7 +103,7 @@ ui.fileInput.addEventListener('change', () => {
 })
 
 ui.tone.addEventListener('click', () => {
-  void run(() => engine.startTone(440), 'Sine at A4. Peak should read 440 Hz if the room is quiet.')
+  void run(() => engine.startTone(440), 'Reference sine · A4 / 440 Hz')
 })
 
 ui.stop.addEventListener('click', () => {
@@ -172,15 +166,15 @@ function paint(): void {
     live,
   })
 
-  ui.statusRate.textContent = live ? `${Math.round(rate)} Hz sample` : '— Hz sample'
+  ui.statusRate.textContent = live ? `${Math.round(rate)} Hz` : '— Hz'
   ui.statusFft.textContent = `FFT ${fftSize}`
   ui.statusDf.textContent = `Δf ${formatDeltaF(binHz)}`
 
   if (!live || peak.db < -72) {
     ui.peak.textContent = '—'
-    ui.peakDb.textContent = live ? 'below noise floor' : 'awaiting signal'
+    ui.peakDb.textContent = live ? 'below floor' : 'awaiting'
     ui.note.textContent = '—'
-    ui.cents.textContent = 'A4 = 440 Hz'
+    ui.cents.textContent = 'A4=440'
     ui.centroid.textContent = '—'
     ui.rms.textContent = '—'
   } else {

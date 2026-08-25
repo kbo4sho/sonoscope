@@ -20,18 +20,18 @@
         <span class="brand-mark" aria-hidden="true">S</span>
         <span>
           <strong>Sonoscope</strong>
-          <small>Audio frequency analyser</small>
+          <small>Spectrum</small>
         </span>
       </div>
-      <div class="masthead-controls">
+      <div class="masthead-controls" role="toolbar" aria-label="Input">
         <span class="environment" id="live-state">
           <i id="live-led"></i>
           <span id="live-label">Standby</span>
         </span>
         <button class="button button-dark" id="btn-mic" type="button">Listen</button>
-        <button class="button button-outline" id="btn-tab" type="button">Tab audio</button>
+        <button class="button button-outline" id="btn-tab" type="button">Tab</button>
         <button class="button button-outline" id="btn-file" type="button">File</button>
-        <button class="button button-signal" id="btn-tone" type="button">440 Hz</button>
+        <button class="button button-signal" id="btn-tone" type="button">440</button>
         <button class="button button-outline" id="btn-stop" type="button" disabled>Stop</button>
         <input id="file-input" type="file" accept="audio/*" hidden />
       </div>
@@ -39,7 +39,7 @@
 
     <div class="status-strip" aria-live="polite">
       <span id="status-input">Input idle</span>
-      <span id="status-rate">— Hz sample</span>
+      <span id="status-rate">— Hz</span>
       <span id="status-fft">FFT —</span>
       <span id="status-df">Δf —</span>
     </div>
@@ -47,102 +47,63 @@
     <p class="honesty" id="notice" hidden></p>
 
     <main class="console">
-      <section class="hero">
-        <div>
-          <p class="eyebrow">Instrument / spectrum</p>
-          <h1>See the frequency, not the light show.</h1>
-          <p>
-            Vertical bars are amplitude in dBFS across a logarithmic frequency axis —
-            the same spacing ears and old radio dials use. Spotify does not expose a live
-            spectrum; listen through the microphone, or capture a browser tab that is
-            playing the track.
-          </p>
-        </div>
-        <aside class="legend-card">
-          <span>Scale</span>
-          <strong>20 Hz–20 kHz</strong>
-          <small>Log frequency · dBFS height</small>
-        </aside>
-      </section>
-
       <section class="instrument" id="scope">
-        <div class="panel-heading">
-          <div>
-            <p class="eyebrow">Analyser</p>
-            <h2>Spectrum</h2>
-          </div>
-          <div class="method-pills" aria-hidden="true">
-            <span>Hann window</span>
-            <span>Log bands</span>
-            <span>Peak hold</span>
-          </div>
+        <div class="scope-chrome">
+          <span class="scope-title">Spectrum</span>
+          <span class="scope-meta">20 Hz–20 kHz · log · dBFS</span>
         </div>
         <div class="scope-frame">
           <canvas id="canvas" width="1200" height="520" aria-label="Frequency spectrum"></canvas>
         </div>
-        <p class="scope-caption">
-          Bass left, treble right. Taller bar = louder in that band. Orange mark is the
-          current peak frequency.
-        </p>
       </section>
 
       <section class="metric-grid" aria-label="Readouts">
         <article>
-          <span>Peak frequency</span>
+          <span>Peak</span>
           <strong id="readout-peak">—</strong>
-          <small id="readout-peak-db">awaiting signal</small>
+          <small id="readout-peak-db">awaiting</small>
         </article>
         <article>
-          <span>Nearest note</span>
+          <span>Note</span>
           <strong id="readout-note">—</strong>
-          <small id="readout-cents">A4 = 440 Hz</small>
+          <small id="readout-cents">A4=440</small>
         </article>
         <article>
-          <span>Spectral centroid</span>
+          <span>Centroid</span>
           <strong id="readout-centroid">—</strong>
-          <small>brightness / center of mass</small>
+          <small>brightness</small>
         </article>
         <article>
-          <span>RMS level</span>
+          <span>RMS</span>
           <strong id="readout-rms">—</strong>
-          <small>time-domain loudness</small>
+          <small>level</small>
         </article>
       </section>
 
-      <section class="controls-panel">
-        <div class="panel-heading">
-          <div>
-            <p class="eyebrow">Front panel</p>
-            <h2>Measurement</h2>
-          </div>
-        </div>
+      <section class="controls-panel" aria-label="Measurement">
         <div class="controls">
           <label>
-            <span>FFT size</span>
+            <span>FFT</span>
             <select id="fft-size">
-              <option value="2048">2048 · faster</option>
+              <option value="2048">2048</option>
               <option value="4096" selected>4096</option>
-              <option value="8192">8192 · finer Δf</option>
-              <option value="16384">16384 · slow / precise</option>
+              <option value="8192">8192</option>
+              <option value="16384">16384</option>
             </select>
           </label>
           <label>
-            <span>Smoothing <em id="smoothing-val">0.72</em></span>
+            <span>Smooth <em id="smoothing-val">0.72</em></span>
             <input id="smoothing" type="range" min="0" max="0.95" step="0.01" value="0.72" />
           </label>
           <label>
-            <span>Input gain <em id="gain-val">1.00</em></span>
+            <span>Gain <em id="gain-val">1.00</em></span>
             <input id="gain" type="range" min="0.25" max="8" step="0.05" value="1" />
           </label>
           <label class="check">
             <input id="peak-hold" type="checkbox" checked />
-            <span>Peak hold</span>
+            <span>Hold</span>
           </label>
         </div>
-        <p class="help">
-          Larger FFT improves frequency resolution and slows the picture. Turn smoothing
-          down to see transients; leave peak hold on to read the tallest recent energy.
-        </p>
       </section>
     </main>
     <script type="module" src="/src/main.ts"></script>
