@@ -480,6 +480,9 @@ select {
   }
 
   .masthead {
+    position: sticky;
+    top: 0;
+    z-index: 20;
     flex-wrap: wrap;
     gap: 6px 8px;
     padding: 8px 8px 6px;
@@ -515,11 +518,11 @@ select {
 
   .console {
     min-height: calc(100dvh - var(--chrome) - var(--status) - 48px);
-    grid-template-rows: minmax(220px, 1fr) auto auto;
+    grid-template-rows: minmax(240px, 1fr) auto auto;
   }
 
   .instrument {
-    min-height: 220px;
+    min-height: 240px;
   }
 
   .scope-chrome {
@@ -541,6 +544,14 @@ select {
 
   .metric-grid article:nth-child(n + 3) {
     border-top: 1px solid var(--line);
+  }
+
+  .controls-panel {
+    position: sticky;
+    bottom: 0;
+    z-index: 20;
+    border-top: 1px solid var(--line);
+    box-shadow: 0 -6px 16px rgba(17, 17, 15, 0.06);
   }
 
   .controls {
