@@ -163,7 +163,7 @@ select {
     auto, auto, auto, auto, auto, auto, auto, auto,
     auto,
     900px 1400px,
-    110px 110px,
+    72px 72px,
     auto;
   background-position:
     0 0, 0 0, 0 0, 0 0,
@@ -397,16 +397,13 @@ select {
 .rb-housing {
   display: block;
   height: 21px;
-  padding: 1.5px 1.5px 4.5px;
-  border-radius: 3px;
-  background: linear-gradient(180deg, #14110c 0%, #241f17 40%, #0b0906 100%);
+  padding: 1.5px 1.5px 3px;
+  border-radius: 2px;
+  background: #12100c;
   box-shadow:
-    inset 0 1px 2px rgba(0, 0, 0, 0.9),
-    inset 0 -1px 0 rgba(255, 240, 214, 0.09),
-    0 1px 0 rgba(255, 255, 255, 0.4),
-    0 1px 2px rgba(30, 22, 12, 0.55),
-    0 3px 6px rgba(0, 0, 0, 0.3),
-    0 6px 13px rgba(0, 0, 0, 0.17);
+    inset 0 1px 1px rgba(0, 0, 0, 0.95),
+    0 1px 0 rgba(255, 255, 255, 0.22),
+    0 1px 2px rgba(0, 0, 0, 0.45);
 }
 
 .rb-well {
@@ -415,28 +412,21 @@ select {
   flex-direction: column;
   justify-content: stretch;
   height: 100%;
-  border-radius: 2px;
+  border-radius: 1px;
 }
 
 .rb-cap {
   display: block;
   flex: 1 1 auto;
-  border-radius: 1.5px;
-  background-color: #9d968b;
+  border-radius: 1px;
+  background-color: #1a1712;
   background-image:
-    /* hard turned lip — 1px, not a soft dome */
-    linear-gradient(180deg, rgba(255, 255, 255, 0.28) 0px, rgba(255, 255, 255, 0) 1.5px),
-    linear-gradient(0deg, rgba(24, 18, 10, 0.5) 0px, rgba(24, 18, 10, 0) 2px),
-    var(--wear),
-    var(--brush),
-    linear-gradient(180deg, #aea79c 0%, #968f83 50%, #7e776c 100%);
-  background-size: auto, auto, 130px 90px, 120px 120px, auto;
-  background-position: 0 0, 0 0, -20px -25px, 0 0, 0 0;
-  background-blend-mode: normal, normal, soft-light, overlay, normal;
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0px, rgba(255, 255, 255, 0) 1px),
+    linear-gradient(180deg, #2a261f 0%, #15130f 55%, #0c0b09 100%);
   box-shadow:
-    inset 0 0 0 1px rgba(20, 15, 8, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2),
-    0 1px 0 rgba(0, 0, 0, 0.55);
+    inset 0 0 0 1px rgba(0, 0, 0, 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 1px 0 rgba(0, 0, 0, 0.5);
 }
 
 .rack-btn:hover:not(:disabled) .rb-cap {
@@ -444,31 +434,31 @@ select {
 }
 
 .rack-btn:active:not(:disabled) .rb-cap {
-  background-image: linear-gradient(180deg, rgba(0, 0, 0, 0.28) 0%, rgba(0, 0, 0, 0.06) 55%, rgba(255, 255, 255, 0.3) 100%), var(--brush);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
+  background-image: linear-gradient(180deg, #0a0907 0%, #1a1712 100%);
+  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.85);
 }
 
 /* switch thrown: housing opens upward, cap sinks, chamber lamp shows */
 .rack-btn.is-active .rb-housing {
-  height: 28px;
-  margin-top: -8px;
+  height: 26px;
+  margin-top: -6px;
   padding: 2px;
-  background: linear-gradient(180deg, #c9c3b4 0%, #ada79a 46%, #928c7f 100%);
+  background: #1c1914;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.45),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.22),
-    0 1px 0 rgba(255, 255, 255, 0.28),
-    0 2px 3px rgba(0, 0, 0, 0.4);
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.5),
+    0 1px 0 rgba(255, 255, 255, 0.18),
+    0 1px 2px rgba(0, 0, 0, 0.45);
 }
 
 .rack-btn.is-active .rb-well {
   padding: 0 1.5px 1.5px;
   justify-content: flex-end;
-  border-radius: 2px;
+  border-radius: 1px;
   background:
-    radial-gradient(ellipse 62% 54% at 50% 20%, rgba(255, 152, 36, 0.44), rgba(255, 150, 20, 0) 74%),
+    radial-gradient(ellipse 62% 54% at 50% 20%, rgba(255, 152, 36, 0.4), rgba(255, 150, 20, 0) 74%),
     linear-gradient(180deg, #1c1710 0%, #0b0906 100%);
-  box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.95);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.95);
 }
 
 .rack-btn.is-active .rb-well::before {
