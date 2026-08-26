@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/sonoscope/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1b140e" />
+    <title>Sonoscope — frequency analyser</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <script type="module" crossorigin src="/sonoscope/assets/index-D-5KXd1l.js"></script>
+    <link rel="stylesheet" crossorigin href="/sonoscope/assets/index-BOX0zyAo.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#scope">Skip to analyser</a>
+
+    <svg class="svg-defs" aria-hidden="true" focusable="false">
+      <!-- Filters removed: feTurbulence over the full chassis was re-rasterized
+           on every canvas frame and starved the spectrum paint loop. Wear now
+           comes only from static PNG maps. -->
+    </svg>
+
+    <div class="cabinet">
+        <div class="chassis">
+        <div class="faceplate">
+          <header class="masthead">
+            <div class="brand-block">
+              <h1 class="brand">Sonoscope</h1>
+              <div class="mic-row" id="live-state">
+                <i class="lamp lamp-sq" id="live-led" aria-hidden="true"></i>
+                <span class="mic-label">Microphone</span>
+              </div>
+            </div>
+
+            <div class="transport" role="toolbar" aria-label="Input">
+              <button class="rack-btn" id="btn-mic" type="button">
+                <span class="rb-name">Listen</span>
+                <i class="led led-dot" aria-hidden="true"></i>
+                <span class="rb-housing"><span class="rb-well"><span class="rb-cap"></span></span></span>
+              </button>
+              <button class="rack-btn rack-btn-tab" id="btn-tab" type="button" title="Capture tab audio">
+                <span class="rb-name">Tab</span>
+                <i class="led led-dot" aria-hidden="true"></i>
+                <span class="rb-housing"><span class="rb-well"><span class="rb-cap"></span></span></span>
+              </button>
+              <button class="rack-btn" id="btn-file" type="button">
+                <span class="rb-name">File</span>
+                <i class="led led-dot" aria-hidden="true"></i>
+                <span class="rb-housing"><span class="rb-well"><span class="rb-cap"></span></span></span>
+              </button>
+              <button class="rack-btn" id="btn-tone" type="button">
+                <span class="rb-name">440</span>
+                <i class="led led-dot" aria-hidden="true"></i>
+                <span class="rb-housing"><span class="rb-well"><span class="rb-cap"></span></span></span>
+              </button>
+              <button class="rack-btn" id="btn-stop" type="button" disabled>
+                <span class="rb-name">Stop</span>
+                <i class="led led-dot" aria-hidden="true"></i>
+                <span class="rb-housing"><span class="rb-well"><span class="rb-cap"></span></span></span>
+              </button>
+              <input id="file-input" type="file" accept="audio/*" hidden />
+            </div>
+          </header>
+
+          <div class="status-bay" aria-live="polite">
+            <span class="bay-glass">
+              <span id="status-input">Standby</span>
+              <span class="status-meta">
+                <span id="status-rate">— Hz</span>
+                <span id="status-fft">FFT —</span>
+                <span id="status-df">Δf —</span>
+              </span>
+            </span>
+          </div>
+
+          <p class="honesty" id="notice" hidden></p>
+        </div>
+
+        <main class="console">
+          <section class="instrument" id="scope">
+            <div class="scope-bezel">
+              <div class="scope-well">
+                <div class="scope-chrome">
+                  <span class="scope-title">Spectrum</span>
+                  <span class="scope-meta">20 Hz–20 kHz · Log · dBFS</span>
+                </div>
+                <canvas id="canvas" width="1200" height="520" aria-label="Frequency spectrum"></canvas>
+              </div>
+            </div>
+          </section>
+
+          <section class="lower-deck" aria-label="Readouts and measurement">
+            <div class="metric-grid">
+              <article>
+                <span class="m-label">Peak</span>
+                <span class="m-read">
+                  <i class="lamp lamp-rd" aria-hidden="true"></i>
+                  <strong id="readout-peak">—</strong>
+                </span>
+                <small id="readout-peak-db" class="sr-only">awaiting</small>
+              </article>
+              <article>
+                <span class="m-label">Note</span>
+                <span class="m-read">
+                  <i class="lamp lamp-rd" aria-hidden="true"></i>
+                  <strong id="readout-note">—</strong>
+                </span>
+                <small id="readout-cents" class="sr-only">A4 = 440</small>
+              </article>
+              <article>
+                <span class="m-label">Centroid</span>
+                <span class="m-read">
+                  <i class="lamp lamp-rd" aria-hidden="true"></i>
+                  <strong id="readout-centroid">—</strong>
+                </span>
+              </article>
+              <article>
+                <span class="m-label">RMS</span>
+                <span class="m-read">
+                  <i class="lamp lamp-rd" aria-hidden="true"></i>
+                  <strong id="readout-rms">—</strong>
+                </span>
+              </article>
+            </div>
+
+            <div class="controls-panel">
+              <label class="ctrl ctrl-fft">
+                <span class="c-head"><span class="c-name">FFT</span></span>
+                <span class="fft-window">
+                  <select id="fft-size">
+                    <option value="2048">2048</option>
+                    <option value="4096" selected>4096</option>
+                    <option value="8192">8192</option>
+                    <option value="16384">16384</option>
+                  </select>
+                  <i class="chev" aria-hidden="true"></i>
+                </span>
+              </label>
+              <label class="ctrl ctrl-slider">
+                <span class="c-head"><span class="c-name">Smooth</span><em id="smoothing-val">0.72</em></span>
+                <input id="smoothing" type="range" min="0" max="0.95" step="0.01" value="0.72" />
+              </label>
+              <label class="ctrl ctrl-slider">
+                <span class="c-head"><span class="c-name">Gain</span><em id="gain-val">1.00</em></span>
+                <input id="gain" type="range" min="0" max="1" step="0.005" value="0.4" />
+              </label>
+              <button class="hold-btn is-on" id="peak-hold" type="button" aria-pressed="true">
+                <i class="lamp lamp-sq" aria-hidden="true"></i>
+                <span>Hold</span>
+              </button>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>
