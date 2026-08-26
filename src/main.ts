@@ -187,8 +187,8 @@ function paint(): void {
   if (belowFloor) {
     ui.peak.textContent = live ? 'Below floor' : '—'
     ui.peakDb.textContent = live ? 'below floor' : 'awaiting'
-    ui.note.textContent = '—'
-    ui.cents.textContent = 'A4 = 440'
+    ui.note.textContent = 'A4 = 440'
+    ui.cents.textContent = ''
     ui.centroid.textContent = '—'
     ui.rms.textContent = '—'
   } else {

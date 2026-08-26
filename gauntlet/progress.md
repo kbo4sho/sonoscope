@@ -17,13 +17,16 @@
 ## Pieces
 | Piece | Rounds | Last verdict | Open gap | Spend |
 |---|---|---|---|---|
-| chassis-shell | 0 | — | first build | 0 |
-| spectrum-display | 0 | — | first build | 0 |
-| header-transport | 0 | — | first build | 0 |
-| readout-grid | 0 | — | first build | 0 |
-| bottom-controls | 0 | — | first build | 0 |
-| whole-frame | 0 | — | await wave 1 | 0 |
+| chassis-shell | 1 | lost | full-frame deep bevels + textured metal | 1 |
+| spectrum-display | 0 | — | paired with chassis | 0 |
+| header-transport | 0 | — | paired with chassis | 0 |
+| readout-grid | 0 | — | paired with chassis | 0 |
+| bottom-controls | 0 | — | paired with chassis | 0 |
+| whole-frame | 1 | lost | see chassis | 1 |
 
 ## Round log
-
-_(empty — wave 1 building)_
+### whole-frame round 1
+- Verdict: lost (bar = A, ours = B)
+- Gap: Rebuild panel at full-frame scale with deep bevels, textured metal, tactile controls, and stronger hardware shadows.
+- Evidence: `gauntlet/rounds/r1-pair-a.jpg` (bar), `gauntlet/rounds/r1-pair-b.jpg` (ours)
+- Route: critic gpt-5.6-sol-xhigh
