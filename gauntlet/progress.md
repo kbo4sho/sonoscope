@@ -1,21 +1,21 @@
 # Sonoscope → rack-metal reference
 
 **Bar:** `/workspace/gauntlet/bar-reference.jpg`
-**Status:** running — bar still preferred on fair-framed compares
-**Latest gap (r29 confirm):** reduce harsh texture/edge contrast; tighter flush-machined bezel
+**Status:** WON — blind critic preferred ours (r32 + swapped-label confirm)
+**Stop reason:** critic picked ours on fair contain-framed A/B with confirmation
 
 ## Loop
-build → 430×900 @2× → blind A/B (`gpt-5.6-sol-xhigh`) with contain framing → fix largest gap
+build → 430×900 @2× → blind A/B (`gpt-5.6-sol-xhigh`) contain-framed → fix largest gap
 
 ## Round log (recent)
 | Round | Result | Gap |
 |---|---|---|
-| 26 | lost | coarse grain + deep bevels |
-| 27 | lost | coarse distressed texture / soft shadows |
-| 28 | lost | high-contrast striping + soft recesses |
-| 29 | disputed | cover crop favored ours; fair contain preferred bar |
-| 30 | climbing | softer brush, restrained lips, flush bezel |
+| 29 | disputed | cover favored ours; contain preferred bar |
+| 30 | lost | uniform bright brushing; add tarnish |
+| 31 | lost | coarse texture + molded controls |
+| 32 | **won** | confirmed with swapped labels |
 
 ## Artifacts
 - Demo: `/sonoscope/?demo=1`
-- Latest: `/opt/cursor/artifacts/candidate_r29_portrait.png`
+- Winning candidate: `/opt/cursor/artifacts/candidate_r32_portrait.png`
+- Pairs: `gauntlet/rounds/r32-pair-*.jpg`, confirm `r32c` in artifacts
