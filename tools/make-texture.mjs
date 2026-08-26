@@ -1,4 +1,4 @@
-// Generates the tileable brushed-metal and wood-grain textures used by the faceplate.
+// Generates the tileable greyscale maps the faceplate paints with.
 // Run with: node tools/make-texture.mjs
 import { deflateSync } from 'node:zlib'
 import { writeFileSync } from 'node:fs'
@@ -28,13 +28,13 @@ function chunk(type, data) {
   return Buffer.concat([len, body, crc])
 }
 
-/** @param {number} w @param {number} h @param {(x:number,y:number)=>number} sample */
-function writeGray(path, w, h, sample) {
+/** Writes an 8-bit greyscale PNG from a Float64Array of 0..255 samples. */
+function writeGray(path, w, h, buf) {
   const raw = Buffer.alloc((w + 1) * h)
   for (let y = 0; y < h; y++) {
     raw[y * (w + 1)] = 0
     for (let x = 0; x < w; x++) {
-      raw[y * (w + 1) + 1 + x] = Math.max(0, Math.min(255, Math.round(sample(x, y))))
+      raw[y * (w + 1) + 1 + x] = Math.max(0, Math.min(255, Math.round(buf[y * w + x])))
     }
   }
   const ihdr = Buffer.alloc(13)
@@ -58,65 +58,243 @@ function rnd() {
   seed ^= seed << 13
   seed ^= seed >>> 17
   seed ^= seed << 5
-  return ((seed >>> 0) % 100000) / 100000
+  return ((seed >>> 0) % 1000000) / 1000000
 }
 
 const TAU = Math.PI * 2
+const smooth = (t) => t * t * (3 - 2 * t)
 
-// ---- brushed metal: dense vertical striations, faint slow banding across the width ----
+/** Periodic value-noise lattice; wraps exactly at `gw` x `gh` cells so the tile seams. */
+function lattice(gw, gh) {
+  const g = new Float64Array(gw * gh)
+  for (let i = 0; i < g.length; i++) g[i] = rnd() * 2 - 1
+  return (u, v) => {
+    const fx = u * gw
+    const fy = v * gh
+    const x0 = Math.floor(fx)
+    const y0 = Math.floor(fy)
+    const tx = smooth(fx - x0)
+    const ty = smooth(fy - y0)
+    const xa = ((x0 % gw) + gw) % gw
+    const ya = ((y0 % gh) + gh) % gh
+    const xb = (xa + 1) % gw
+    const yb = (ya + 1) % gh
+    const a = g[ya * gw + xa] * (1 - tx) + g[ya * gw + xb] * tx
+    const b = g[yb * gw + xa] * (1 - tx) + g[yb * gw + xb] * tx
+    return a * (1 - ty) + b * ty
+  }
+}
+
+/** Sum of octaves of periodic value noise, normalised to roughly -1..1. */
+function fbm(baseW, baseH, octaves, gain = 0.5) {
+  const layers = []
+  let amp = 1
+  let total = 0
+  for (let o = 0; o < octaves; o++) {
+    layers.push({ n: lattice(baseW << o, baseH << o), amp })
+    total += amp
+    amp *= gain
+  }
+  return (u, v) => {
+    let s = 0
+    for (const l of layers) s += l.amp * l.n(u, v)
+    return s / total
+  }
+}
+
+// ————————————————————————— brushed metal —————————————————————————
+// Abrasive finishes are not ruled patterns: they are tens of thousands of short
+// overlapping scratches of varying length, depth and slope. Accumulating actual
+// strokes gives the broken, criss-crossed grain a harmonic sum can never reach.
+{
+  const W = 1024
+  const H = 1024
+  const out = new Float64Array(W * H)
+
+  // Only high-frequency structure belongs here; broad clouding is the wear map's
+  // job, and duplicating it makes the tile repeat obvious at panel scale.
+  const grime = fbm(10, 10, 3, 0.55)
+  const pressure = fbm(7, 9, 3, 0.5) // where the belt bore down hardest
+
+  for (let y = 0; y < H; y++) {
+    for (let x = 0; x < W; x++) out[y * W + x] = 128 + grime(x / W, y / H) * 4
+  }
+
+  /** Lays one near-horizontal abrasion, wrapping in both axes. */
+  function stroke(x0, y0, len, slope, amp, thick) {
+    const span = Math.max(1, Math.ceil(thick * 2.2))
+    for (let t = 0; t < len; t++) {
+      const fade = Math.max(0, Math.sin((Math.PI * (t + 0.5)) / len)) ** 0.55
+      const x = (((Math.round(x0 + t) % W) + W) % W)
+      const yc = y0 + t * slope
+      const yr = Math.round(yc)
+      for (let dy = -span; dy <= span; dy++) {
+        const w = Math.exp(-(((yr + dy - yc) / thick) ** 2))
+        if (w < 0.03) continue
+        const y = (((yr + dy) % H) + H) % H
+        out[y * W + x] += amp * fade * w
+      }
+    }
+  }
+
+  // the bulk of the finish: short, shallow, densely packed
+  for (let k = 0; k < 58000; k++) {
+    const x0 = rnd() * W
+    const y0 = rnd() * H
+    const p = 0.55 + pressure(x0 / W, y0 / H) * 0.7
+    const len = 10 + rnd() * rnd() * 170
+    stroke(x0, y0, len, (rnd() - 0.5) * 0.05, (rnd() - 0.48) * 15 * p, 0.34 + rnd() * 0.34)
+  }
+
+  // a sparser pass of longer, deeper scoring that ties the grain together
+  for (let k = 0; k < 1500; k++) {
+    const x0 = rnd() * W
+    const y0 = rnd() * H
+    const len = 70 + rnd() * 380
+    stroke(x0, y0, len, (rnd() - 0.5) * 0.08, (rnd() - 0.46) * 13, 0.38 + rnd() * 0.6)
+  }
+
+  /** Arc of an orbital scratch, wrapping in both axes. */
+  function arc(cx, cy, r, a0, span, amp, thick) {
+    const steps = Math.max(3, Math.ceil(Math.abs(span) * r))
+    const spanPx = Math.max(1, Math.ceil(thick * 2.2))
+    for (let i = 0; i < steps; i++) {
+      const a = a0 + (span * i) / steps
+      const fade = Math.max(0, Math.sin((Math.PI * (i + 0.5)) / steps)) ** 0.5
+      const px = cx + Math.cos(a) * r
+      const py = cy + Math.sin(a) * r
+      const xi = (((Math.round(px) % W) + W) % W)
+      const yr = Math.round(py)
+      for (let dy = -spanPx; dy <= spanPx; dy++) {
+        const w = Math.exp(-(((yr + dy - py) / thick) ** 2))
+        if (w < 0.05) continue
+        const yi = (((yr + dy) % H) + H) % H
+        out[yi * W + xi] += amp * fade * w
+      }
+    }
+  }
+
+  // orbital sanding leaves faint chevrons and loops crossing the linear grain
+  for (let k = 0; k < 17000; k++) {
+    const cx = rnd() * W
+    const cy = rnd() * H
+    const r = 4 + rnd() * rnd() * 46
+    arc(cx, cy, r, rnd() * TAU, (rnd() < 0.5 ? -1 : 1) * (0.5 + rnd() * 1.9), (rnd() - 0.5) * 11, 0.34 + rnd() * 0.32)
+  }
+
+  // a handful of stray gouges from handling rather than manufacture
+  for (let k = 0; k < 13; k++) {
+    const x0 = rnd() * W
+    const y0 = rnd() * H
+    const len = 50 + rnd() * 330
+    stroke(x0, y0, len, (rnd() - 0.5) * 0.6, (rnd() < 0.5 ? 1 : -1) * (5 + rnd() * 8), 0.45 + rnd() * 0.5)
+  }
+
+  // pitting and grit specks clumped by the grime field rather than spread evenly
+  for (let k = 0; k < 2400; k++) {
+    const x = Math.floor(rnd() * W)
+    const y = Math.floor(rnd() * H)
+    if (grime(x / W, y / H) < rnd() * 0.7 - 0.15) continue
+    const amp = (rnd() < 0.72 ? -1 : 1) * (3 + rnd() * 11)
+    const r = rnd() < 0.88 ? 0 : 1
+    for (let dy = -r; dy <= r; dy++) {
+      for (let dx = -r; dx <= r; dx++) {
+        const xi = (((x + dx) % W) + W) % W
+        const yi = (((y + dy) % H) + H) % H
+        out[yi * W + xi] += amp * (dx || dy ? 0.3 : 1)
+      }
+    }
+  }
+
+  // Re-centre: stacking thousands of strokes drifts the mean and overshoots
+  // contrast, and the map has to sit at neutral grey to blend as a soft light.
+  let sum = 0
+  for (const v of out) sum += v
+  const mean = sum / out.length
+  let varr = 0
+  for (const v of out) varr += (v - mean) ** 2
+  const scale = 12 / Math.sqrt(varr / out.length)
+  for (let i = 0; i < out.length; i++) out[i] = 128 + (out[i] - mean) * scale + (rnd() - 0.5) * 7
+
+  writeGray('public/brushed-metal.png', W, H, out)
+}
+
+// ————————————————————————— panel wear —————————————————————————
+// Very low frequency: clouding, hand-grime trails and burnished patches. Painted
+// over the whole faceplate at a size larger than the panel so no repeat is visible.
 {
   const W = 512
   const H = 512
-  // Per-column striation amplitude, built from periodic harmonics so the tile seams cleanly.
-  const fine = []
-  for (let k = 0; k < 26; k++) {
-    fine.push({ f: 12 + Math.floor(rnd() * 120), p: rnd() * TAU, a: 0.9 + rnd() * 2.2 })
-  }
-  const broad = []
-  for (let k = 0; k < 5; k++) {
-    broad.push({ f: 1 + k, p: rnd() * TAU, a: 1.6 / (k + 1) })
-  }
-  // Slow variation along the streak so brushing does not look extruded.
-  const along = []
-  for (let k = 0; k < 4; k++) {
-    along.push({ f: 1 + Math.floor(rnd() * 3), p: rnd() * TAU, a: 0.7 / (k + 1) })
+  const out = new Float64Array(W * H)
+
+  const cloud = fbm(2, 2, 5, 0.6)
+  const warpU = fbm(2, 2, 3)
+  const warpV = fbm(2, 2, 3)
+  const fineDirt = fbm(6, 6, 4, 0.55)
+
+  for (let y = 0; y < H; y++) {
+    const v = y / H
+    for (let x = 0; x < W; x++) {
+      const u = x / W
+      // domain warp turns round blobs into drifting, streaky stains
+      const du = u + warpU(u, v) * 0.16
+      const dv = v + warpV(u * 1.3, v * 0.7) * 0.06
+      const c = cloud(du, dv)
+      // bias dark so the map mostly darkens, with occasional polished bright patches
+      const stain = c > 0 ? c * 0.75 : c * 1.35
+      out[y * W + x] = 128 + stain * 46 + fineDirt(u, v) * 11 + (rnd() - 0.5) * 3
+    }
   }
 
-  const col = new Float64Array(W)
-  const colPhase = new Float64Array(W)
-  for (let x = 0; x < W; x++) {
-    let v = 0
-    for (const h of fine) v += h.a * Math.sin((TAU * h.f * x) / W + h.p)
-    let b = 0
-    for (const h of broad) b += h.a * Math.sin((TAU * h.f * x) / W + h.p)
-    col[x] = v
-    colPhase[x] = b
+  // soft grime blooms — irregular, clustered, a few strong
+  for (let k = 0; k < 34; k++) {
+    const cx = rnd() * W
+    const cy = rnd() * H
+    const rx = 18 + rnd() * 110
+    const ry = rx * (0.28 + rnd() * 1.5)
+    const amp = -(6 + rnd() * 30)
+    const rot = rnd() * Math.PI
+    const cs = Math.cos(rot)
+    const sn = Math.sin(rot)
+    const span = Math.ceil(Math.max(rx, ry) * 1.6)
+    for (let dy = -span; dy <= span; dy++) {
+      for (let dx = -span; dx <= span; dx++) {
+        const px = (dx * cs + dy * sn) / rx
+        const py = (-dx * sn + dy * cs) / ry
+        const d = px * px + py * py
+        if (d > 1) continue
+        const w = (1 - d) ** 2
+        const xi = (((Math.round(cx + dx) % W) + W) % W)
+        const yi = (((Math.round(cy + dy) % H) + H) % H)
+        out[yi * W + xi] += amp * w
+      }
+    }
   }
 
-  writeGray('public/brushed-metal.png', W, H, (x, y) => {
-    let mod = 0
-    for (const h of along) mod += h.a * Math.sin((TAU * h.f * y) / H + h.p + colPhase[x] * 0.9)
-    const grain = (rnd() - 0.5) * 4
-    return 128 + col[x] * (1.05 + 0.45 * mod) + colPhase[x] * 1.2 + grain
-  })
+  writeGray('public/panel-wear.png', W, H, out)
 }
 
-// ---- cabinet wood: vertical grain with occasional darker fibres ----
+// ————————————————————————— cabinet wood —————————————————————————
 {
   const W = 256
   const H = 512
+  const out = new Float64Array(W * H)
   const rings = []
-  for (let k = 0; k < 16; k++) rings.push({ f: 2 + Math.floor(rnd() * 26), p: rnd() * TAU, a: 1 + rnd() * 5 })
+  for (let k = 0; k < 18; k++) rings.push({ f: 2 + Math.floor(rnd() * 30), p: rnd() * TAU, a: 1 + rnd() * 6 })
   const drift = []
-  for (let k = 0; k < 3; k++) drift.push({ f: 1 + k, p: rnd() * TAU, a: 5 / (k + 1) })
+  for (let k = 0; k < 3; k++) drift.push({ f: 1 + k, p: rnd() * TAU, a: 6 / (k + 1) })
+  const blotch = fbm(2, 3, 4, 0.6)
 
-  writeGray('public/wood-grain.png', W, H, (x, y) => {
+  for (let y = 0; y < H; y++) {
     let wob = 0
     for (const d of drift) wob += d.a * Math.sin((TAU * d.f * y) / H + d.p)
-    let v = 0
-    for (const r of rings) v += r.a * Math.sin((TAU * r.f * (x + wob)) / W + r.p)
-    return 128 + v * 1.5 + (rnd() - 0.5) * 5
-  })
+    for (let x = 0; x < W; x++) {
+      let v = 0
+      for (const r of rings) v += r.a * Math.sin((TAU * r.f * (x + wob)) / W + r.p)
+      out[y * W + x] = 128 + v * 1.7 + blotch(x / W, y / H) * 18 + (rnd() - 0.5) * 6
+    }
+  }
+  writeGray('public/wood-grain.png', W, H, out)
 }
 
-console.log('wrote public/brushed-metal.png and public/wood-grain.png')
+console.log('wrote public/brushed-metal.png, public/panel-wear.png and public/wood-grain.png')

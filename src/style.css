@@ -1,12 +1,14 @@
 :root {
-  /* lightly warmed silver panel — matched to reference mean ~187 */
-  --metal: #a39c93;
+  /* lightly warmed silver panel — matched to reference flat-patch mean ~205/196/189 */
+  --metal: #b3aca2;
 
-  --ink: #23211b;
-  --label: #35322a;
-  --engrave: rgba(255, 255, 255, 0.42);
-  --seam-dark: rgba(22, 19, 12, 0.58);
-  --seam-lite: rgba(255, 255, 255, 0.2);
+  --ink: #1b1914;
+  --label: #29261f;
+  --engrave: rgba(255, 255, 255, 0.46);
+  --seam-dark: rgba(18, 14, 8, 0.72);
+  --seam-lite: rgba(255, 255, 255, 0.3);
+  /* warm brown a machined cut shows before it falls away to black */
+  --cut: rgba(46, 34, 20, 0.9);
 
   --amber: #ff9a14;
   --amber-hot: #ffd58a;
@@ -19,13 +21,16 @@
   --script: "Great Vibes", "Segoe Script", cursive;
 
   --brush: url("/sonoscope/brushed-metal.png");
+  --wear: url("/sonoscope/panel-wear.png");
   --wood: url("/sonoscope/wood-grain.png");
-  /* turned-aluminium knob: dome highlight, pointer score, chamfered rim */
+  /* turned-aluminium knob: matte dome, faint pointer score, worn chamfer */
   --knob:
-    radial-gradient(circle at 50% 32%, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0) 48%),
-    linear-gradient(90deg, rgba(255, 255, 255, 0) calc(50% - 1.5px), rgba(58, 54, 46, 0.45) calc(50% - 0.7px), rgba(58, 54, 46, 0.45) calc(50% + 0.7px), rgba(255, 255, 255, 0) calc(50% + 1.5px)),
-    radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0) 56%, rgba(0, 0, 0, 0.2) 70%, rgba(255, 255, 255, 0.6) 85%, rgba(74, 70, 62, 0.45) 100%),
-    linear-gradient(180deg, #ece8de 0%, #cdc8ba 24%, #a9a396 54%, #8b8578 78%, #b8b3a5 100%);
+    radial-gradient(circle at 42% 28%, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 52%),
+    radial-gradient(circle at 62% 82%, rgba(38, 32, 22, 0.32) 0%, rgba(38, 32, 22, 0) 46%),
+    linear-gradient(90deg, rgba(255, 255, 255, 0) calc(50% - 1.6px), rgba(52, 47, 38, 0.34) calc(50% - 0.8px), rgba(52, 47, 38, 0.34) calc(50% + 0.8px), rgba(255, 255, 255, 0) calc(50% + 1.6px)),
+    radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0) 58%, rgba(28, 22, 14, 0.18) 74%, rgba(255, 255, 255, 0.32) 88%, rgba(46, 40, 30, 0.5) 100%),
+    var(--brush),
+    linear-gradient(168deg, #ddd8cc 0%, #c3bdaf 30%, #a59e91 62%, #868073 88%, #a49e91 100%);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
@@ -101,16 +106,16 @@ select {
 .cabinet {
   min-height: 100dvh;
   max-height: 100dvh;
-  padding: 14px 10px calc(14px + var(--safe-bottom));
+  padding: 13px 10px calc(13px + var(--safe-bottom));
   display: flex;
-  background-color: #3d2818;
+  background-color: #573824;
   background-image:
-    linear-gradient(180deg, rgba(0, 0, 0, 0.4) 0%, rgba(255, 220, 170, 0.06) 45%, rgba(0, 0, 0, 0.35) 100%),
-    linear-gradient(90deg, #2a1a10 0%, #4a3220 22%, #523826 50%, #3d2818 78%, #24160e 100%),
+    linear-gradient(180deg, rgba(20, 10, 4, 0.34) 0%, rgba(255, 216, 162, 0.14) 30%, rgba(20, 10, 4, 0.16) 62%, rgba(14, 7, 2, 0.42) 100%),
+    linear-gradient(90deg, #2e1c0e 0%, #6a442a 16%, #744b30 46%, #573824 76%, #29190d 100%),
     var(--wood);
-  background-size: auto, auto, 160px 320px;
+  background-size: auto, auto, 140px 280px;
   background-blend-mode: overlay, normal, soft-light;
-  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.45);
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.4);
 }
 
 /* ——————————————————————— chassis ——————————————————————— */
@@ -124,33 +129,64 @@ select {
   background-color: var(--metal);
   background-image:
     /* machined edges: dark score then a bright turned lip */
-    linear-gradient(90deg, rgba(18, 12, 6, 0.72) 0px, rgba(18, 12, 6, 0.3) 1.6px, rgba(255, 255, 255, 0.5) 2.2px, rgba(255, 255, 255, 0) 7px),
-    linear-gradient(270deg, rgba(18, 12, 6, 0.8) 0px, rgba(18, 12, 6, 0.26) 2.4px, rgba(255, 255, 255, 0) 9px),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.35) 0px, rgba(255, 255, 255, 0) 3px),
-    linear-gradient(0deg, rgba(18, 12, 6, 0.5) 0px, rgba(18, 12, 6, 0) 3px),
-    /* light source high and slightly left of the panel */
-    linear-gradient(100deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.015) 36%, rgba(0, 0, 0, 0.05) 74%, rgba(0, 0, 0, 0.11) 100%),
+    linear-gradient(90deg, rgba(14, 9, 4, 0.85) 0px, rgba(14, 9, 4, 0.34) 1.6px, rgba(255, 255, 255, 0.52) 2.4px, rgba(255, 255, 255, 0) 8px),
+    linear-gradient(270deg, rgba(12, 8, 3, 0.92) 0px, rgba(12, 8, 3, 0.3) 2.4px, rgba(255, 255, 255, 0.22) 3.4px, rgba(255, 255, 255, 0) 10px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0px, rgba(255, 255, 255, 0) 3px),
+    linear-gradient(0deg, rgba(14, 9, 4, 0.62) 0px, rgba(14, 9, 4, 0) 4px),
+    /* grime that has crept in from the rack ears and settled unevenly */
+    radial-gradient(ellipse 52% 18% at 6% 1%, rgba(48, 36, 20, 0.17), rgba(48, 36, 20, 0) 74%),
+    radial-gradient(ellipse 34% 26% at 105% 32%, rgba(42, 31, 17, 0.2), rgba(42, 31, 17, 0) 72%),
+    radial-gradient(ellipse 58% 14% at 80% 101%, rgba(38, 28, 15, 0.2), rgba(38, 28, 15, 0) 78%),
+    radial-gradient(ellipse 22% 18% at -6% 66%, rgba(44, 33, 18, 0.16), rgba(44, 33, 18, 0) 74%),
+    /* burnished patch where a hand has rested for thirty years */
+    radial-gradient(ellipse 34% 12% at 30% 88%, rgba(255, 250, 238, 0.13), rgba(255, 250, 238, 0) 70%),
+    /* key light high and a little to the left; both machined edges fall into shade */
+    linear-gradient(90deg, rgba(26, 19, 9, 0.1) 0%, rgba(26, 19, 9, 0) 9%, rgba(26, 19, 9, 0) 78%, rgba(26, 19, 9, 0.17) 100%),
+    linear-gradient(100deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.015) 36%, rgba(0, 0, 0, 0.04) 74%, rgba(0, 0, 0, 0.07) 100%),
+    var(--wear),
     var(--brush),
     linear-gradient(
       180deg,
-      #b8afa5 0%,
-      #a49b91 14%,
-      #9f968d 36%,
-      #aaa198 60%,
-      #a59c93 80%,
-      #8a8178 100%
+      #dbd4cc 0%,
+      #cdc5bd 13%,
+      #c6bfb7 34%,
+      #cfc7bf 58%,
+      #cec6be 79%,
+      #c5bdb5 100%
     );
-  background-size: auto, auto, auto, auto, auto, 220px 220px, auto;
-  background-blend-mode: normal, normal, normal, normal, soft-light, overlay, normal;
+  background-size:
+    auto, auto, auto, auto,
+    auto, auto, auto, auto, auto,
+    auto, auto,
+    780px 1180px,
+    512px 512px,
+    auto;
+  background-position:
+    0 0, 0 0, 0 0, 0 0,
+    0 0, 0 0, 0 0, 0 0, 0 0,
+    0 0, 0 0,
+    -90px -140px,
+    0 0,
+    0 0;
+  background-blend-mode:
+    normal, normal, normal, normal,
+    normal, normal, normal, normal, normal,
+    normal, soft-light,
+    soft-light,
+    overlay,
+    normal;
   overflow: hidden;
   box-shadow:
-    0 2px 7px rgba(0, 0, 0, 0.55),
-    0 -2px 6px rgba(0, 0, 0, 0.4);
+    0 0 0 1px rgba(10, 6, 2, 0.85),
+    0 3px 10px rgba(0, 0, 0, 0.7),
+    0 10px 26px rgba(0, 0, 0, 0.5),
+    0 -3px 9px rgba(0, 0, 0, 0.55);
 }
 
 /* surface wear sits on the panel but under every control */
 .chassis::before,
-.chassis::after {
+.chassis::after,
+.wear-scuff {
   content: "";
   position: absolute;
   z-index: 0;
@@ -165,6 +201,14 @@ select {
 
 .chassis::after {
   filter: url(#fleck);
+}
+
+/* the scuff pass is offset and scaled so it never lines up with the patina */
+.wear-scuff {
+  inset: -12% -8%;
+  opacity: 0.85;
+  filter: url(#scuff);
+  mix-blend-mode: overlay;
 }
 
 /* ——————————————————————— lamps ——————————————————————— */
@@ -343,17 +387,21 @@ select {
   visibility: hidden;
 }
 
+/* The cap sits in a black surround that shows most at the bottom, and the whole
+   assembly throws a soft contact shadow down onto the panel. */
 .rb-housing {
   display: block;
-  height: 18px;
-  padding: 2px;
-  border-radius: 2px;
-  background: linear-gradient(180deg, #14120e 0%, #221f19 42%, #0a0907 100%);
+  height: 21px;
+  padding: 1.5px 1.5px 4.5px;
+  border-radius: 3px;
+  background: linear-gradient(180deg, #0d0c09 0%, #1b1914 38%, #060504 100%);
   box-shadow:
-    inset 0 2px 3px rgba(0, 0, 0, 0.9),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.08),
-    0 1px 0 rgba(255, 255, 255, 0.28),
-    0 1px 2px rgba(0, 0, 0, 0.35);
+    inset 0 1px 2px rgba(0, 0, 0, 0.95),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.07),
+    0 1px 0 rgba(255, 255, 255, 0.4),
+    0 2px 3px rgba(0, 0, 0, 0.42),
+    0 4px 9px rgba(0, 0, 0, 0.26),
+    0 7px 14px rgba(0, 0, 0, 0.14);
 }
 
 .rb-well {
@@ -368,17 +416,19 @@ select {
 .rb-cap {
   display: block;
   flex: 1 1 auto;
-  border-radius: 2px;
-  background-color: #3a3a3c;
+  border-radius: 1.5px;
+  background-color: #9d968b;
   background-image:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 40%, rgba(0, 0, 0, 0.25) 100%),
-    var(--brush);
-  background-size: auto, 90px 90px;
-  background-blend-mode: soft-light, soft-light;
+    linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0px, rgba(255, 255, 255, 0) 2px),
+    linear-gradient(0deg, rgba(0, 0, 0, 0.42) 0px, rgba(0, 0, 0, 0) 3px),
+    var(--wear),
+    var(--brush),
+    linear-gradient(180deg, #cbc4b8 0%, #ada698 46%, #8e8779 100%);
+  background-size: auto, auto, 130px 90px, 150px 150px, auto;
+  background-blend-mode: normal, normal, soft-light, overlay, normal;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.18),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.35),
-    0 1px 2px rgba(0, 0, 0, 0.4);
+    inset 0 0 0 0.5px rgba(20, 15, 8, 0.35),
+    0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .rack-btn:hover:not(:disabled) .rb-cap {
@@ -453,38 +503,52 @@ select {
 
 /* ——————————————————————— status bay ——————————————————————— */
 
+/* A window cut clean through the plate: the panel darkens around the opening,
+   the near wall of the cut catches light along the bottom, and the glass sits
+   well below the surface. */
 .status-bay {
+  position: relative;
   margin-top: 12px;
-  padding: 4px;
-  border-radius: 4px;
-  background: linear-gradient(180deg, #17110a 0%, #33281a 55%, #100c07 100%);
+  padding: 2.5px;
+  border-radius: 3px;
+  background: linear-gradient(180deg, #0a0805 0%, #241c11 60%, #090705 100%);
   box-shadow:
-    inset 0 2px 4px rgba(0, 0, 0, 0.8),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.09),
-    0 1px 0 rgba(255, 255, 255, 0.48),
-    0 2px 5px rgba(0, 0, 0, 0.3);
+    inset 0 2px 5px rgba(0, 0, 0, 0.95),
+    inset 0 -1px 0 rgba(255, 236, 200, 0.14),
+    0 1px 0 rgba(255, 255, 255, 0.55),
+    0 2px 4px rgba(0, 0, 0, 0.4),
+    0 0 9px 3px rgba(44, 32, 17, 0.42);
 }
 
 .bay-glass {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
   min-height: 30px;
   padding: 0 15px;
-  border-radius: 2px;
-  background:
-    linear-gradient(180deg, rgba(60, 38, 8, 0.22) 0%, rgba(255, 240, 200, 0) 24%, rgba(255, 240, 200, 0.18) 78%, rgba(70, 46, 12, 0.14) 100%),
-    linear-gradient(180deg, #a89462 0%, var(--bay-glass) 32%, #d2c49a 72%, #b8a678 100%);
+  border-radius: 1.5px;
+  background-color: #9a7f5c;
+  background-image:
+    /* dirt drawn to the edges of the pane */
+    radial-gradient(ellipse 78% 130% at 50% 50%, rgba(255, 236, 196, 0.16), rgba(48, 30, 8, 0.34) 100%),
+    linear-gradient(180deg, rgba(30, 18, 4, 0.5) 0%, rgba(30, 18, 4, 0) 26%),
+    linear-gradient(0deg, rgba(255, 238, 198, 0.2) 0%, rgba(255, 238, 198, 0) 22%),
+    var(--wear),
+    linear-gradient(180deg, #806a4c 0%, #9d8261 30%, #a98d68 68%, #866f50 100%);
+  background-size: auto, auto, auto, 420px 120px, auto;
+  background-position: 0 0, 0 0, 0 0, -60px -30px, 0 0;
+  background-blend-mode: normal, normal, normal, soft-light, normal;
   box-shadow:
-    inset 0 2px 4px rgba(48, 30, 6, 0.5),
-    inset 0 -1px 0 rgba(255, 240, 205, 0.4),
-    inset 0 0 0 1px rgba(60, 40, 12, 0.28);
+    inset 0 3px 6px rgba(24, 14, 2, 0.72),
+    inset 0 -1px 0 rgba(255, 236, 194, 0.22),
+    inset 0 0 0 1px rgba(38, 24, 6, 0.4);
   color: #241c0e;
   font-size: 12px;
   letter-spacing: 0.05em;
   overflow: hidden;
-  text-shadow: 0 1px 0 rgba(255, 240, 200, 0.3);
+  text-shadow: 0 1px 0 rgba(255, 240, 200, 0.22);
 }
 
 .bay-glass > span {
@@ -516,6 +580,8 @@ select {
 
 /* ——————————————————————— console ——————————————————————— */
 
+/* Rack sections are separate plates: a milled groove, a lit lip on the lower
+   plate, and a soft shadow the upper plate throws across it. */
 .console {
   flex: 1 1 auto;
   min-height: 0;
@@ -523,10 +589,11 @@ select {
   grid-template-rows: minmax(0, 1fr) auto;
   position: relative;
   z-index: 1;
-  border-top: 1px solid rgba(20, 15, 8, 0.5);
+  border-top: 1.5px solid rgba(16, 11, 5, 0.82);
+  background-image: linear-gradient(180deg, rgba(20, 14, 6, 0.1) 0%, rgba(20, 14, 6, 0) 26px);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.5),
-    inset 0 8px 14px -10px rgba(0, 0, 0, 0.28);
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.58),
+    inset 0 9px 12px -9px rgba(0, 0, 0, 0.5);
 }
 
 .instrument {
@@ -542,40 +609,48 @@ select {
   flex: 1 1 auto;
   min-height: 0;
   display: flex;
-  padding: 6px;
-  border-radius: 8px;
-  background-color: #b8b3a9;
+  padding: 9px;
+  border-radius: 9px;
+  background-color: #c0b9ae;
   background-image:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0px, rgba(255, 255, 255, 0) 6px),
-    linear-gradient(0deg, rgba(255, 255, 255, 0.28) 0px, rgba(255, 255, 255, 0) 6px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.2) 0px, rgba(255, 255, 255, 0) 7px),
-    linear-gradient(270deg, rgba(255, 255, 255, 0.16) 0px, rgba(255, 255, 255, 0) 7px),
-    linear-gradient(180deg, rgba(0, 0, 0, 0.18) 0%, rgba(0, 0, 0, 0) 40%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.45) 0px, rgba(255, 255, 255, 0) 5px),
+    linear-gradient(0deg, rgba(255, 255, 255, 0.3) 0px, rgba(255, 255, 255, 0) 5px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.22) 0px, rgba(255, 255, 255, 0) 6px),
+    linear-gradient(270deg, rgba(255, 255, 255, 0.18) 0px, rgba(255, 255, 255, 0) 6px),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.14) 0%, rgba(0, 0, 0, 0) 34%),
+    var(--wear),
     var(--brush);
-  background-size: auto, auto, auto, auto, auto, 160px 160px;
-  background-blend-mode: normal, normal, normal, normal, normal, soft-light;
+  background-size: auto, auto, auto, auto, auto, 640px 460px, 340px 340px;
+  background-position: 0 0, 0 0, 0 0, 0 0, 0 0, -160px -220px, 0 0;
+  background-blend-mode: normal, normal, normal, normal, normal, soft-light, soft-light;
   box-shadow:
-    0 -1px 0 rgba(24, 18, 10, 0.4),
-    0 1px 0 rgba(255, 255, 255, 0.4),
-    0 0 0 1px rgba(24, 18, 10, 0.28),
-    0 2px 6px rgba(0, 0, 0, 0.22);
+    0 -1px 0 rgba(24, 18, 10, 0.42),
+    0 1px 0 rgba(255, 255, 255, 0.45),
+    0 0 0 1px rgba(24, 18, 10, 0.3),
+    0 2px 6px rgba(0, 0, 0, 0.24);
 }
 
+/* The opening is a real cut: a warm chamfer wall around the rim, a hard black
+   edge, and a halo of shadow thrown back onto the bezel that surrounds it. */
 .scope-well {
   flex: 1 1 auto;
   min-width: 0;
   min-height: 0;
   display: flex;
   flex-direction: column;
-  border-radius: 5px;
-  background: #17170f;
+  border-radius: 7px;
+  background: #1a1a15;
   box-shadow:
-    inset 0 10px 18px rgba(0, 0, 0, 0.95),
-    inset 0 -7px 14px rgba(0, 0, 0, 0.7),
-    inset 9px 0 16px rgba(0, 0, 0, 0.55),
-    inset -9px 0 16px rgba(0, 0, 0, 0.55),
-    inset 0 0 0 1px rgba(0, 0, 0, 0.92),
-    0 -1px 0 rgba(255, 255, 255, 0.12);
+    inset 0 18px 22px -8px rgba(30, 22, 12, 0.98),
+    inset 0 -12px 18px -8px rgba(16, 12, 6, 0.9),
+    inset 16px 0 22px -12px rgba(26, 19, 10, 0.92),
+    inset -16px 0 22px -12px rgba(26, 19, 10, 0.92),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.95),
+    0 0 0 1px rgba(38, 28, 15, 0.6),
+    0 0 6px 2px rgba(46, 34, 18, 0.5),
+    0 0 14px 6px rgba(48, 36, 20, 0.28),
+    0 -1px 0 rgba(255, 255, 255, 0.1),
+    0 2px 3px rgba(255, 255, 255, 0.16);
   overflow: hidden;
 }
 
@@ -612,12 +687,18 @@ select {
 
 /* ——————————————————————— lower deck ——————————————————————— */
 
+/* Reads about thirty levels darker than the faceplate in the reference, as a
+   separate plate sitting lower in the rack and catching less of the key light. */
 .lower-deck {
   flex: 0 0 auto;
-  border-top: 1px solid rgba(20, 15, 8, 0.42);
+  position: relative;
+  border-top: 1.5px solid rgba(16, 11, 5, 0.78);
+  background-image:
+    linear-gradient(180deg, rgba(28, 20, 10, 0.04) 0%, rgba(28, 20, 10, 0.09) 100%),
+    linear-gradient(180deg, rgba(20, 14, 6, 0.14) 0px, rgba(20, 14, 6, 0) 14px);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.4),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.18);
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.22);
 }
 
 .metric-grid,
@@ -632,11 +713,12 @@ select {
 .controls-panel::before {
   content: "";
   position: absolute;
-  top: 7px;
-  bottom: 7px;
+  top: 6px;
+  bottom: 6px;
   left: 50%;
   width: 2px;
   margin-left: -1px;
+  z-index: 2;
   pointer-events: none;
   background: linear-gradient(90deg, var(--seam-dark) 0 1px, var(--seam-lite) 1px 2px);
 }
@@ -646,6 +728,26 @@ select {
   position: relative;
 }
 
+/* each cell is its own shallow lamination: lit along its top, shaded at its foot */
+.metric-grid article::before,
+.controls-panel > *::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0px, rgba(255, 255, 255, 0) 9px),
+    linear-gradient(0deg, rgba(24, 17, 8, 0.08) 0px, rgba(24, 17, 8, 0) 11px);
+}
+
+.metric-grid article > *,
+.controls-panel > * > *,
+.hold-btn > * {
+  position: relative;
+  z-index: 1;
+}
+
 .metric-grid article:nth-child(-n + 2)::after,
 .controls-panel > *:nth-child(-n + 2)::after {
   content: "";
@@ -653,9 +755,10 @@ select {
   left: 0;
   right: 0;
   bottom: -1px;
-  height: 2px;
+  height: 3px;
+  z-index: 2;
   pointer-events: none;
-  background: linear-gradient(180deg, var(--seam-dark) 0 1px, var(--seam-lite) 1px 2px);
+  background: linear-gradient(180deg, var(--seam-dark) 0 1px, var(--seam-lite) 1px 2px, rgba(0, 0, 0, 0.06) 2px 3px);
 }
 
 .metric-grid {
@@ -746,12 +849,14 @@ select {
 .fft-window {
   position: relative;
   display: block;
-  padding: 1.5px;
+  padding: 2px;
   border-radius: 3px;
-  background: linear-gradient(180deg, #6d685f 0%, #9d988c 45%, #c9c4b6 100%);
+  background: linear-gradient(180deg, #5f5a51 0%, #8f8a7e 42%, #c6c1b3 100%);
   box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.42),
-    0 1px 2px rgba(0, 0, 0, 0.35);
+    inset 0 1px 1px rgba(0, 0, 0, 0.5),
+    0 1px 0 rgba(255, 255, 255, 0.5),
+    0 2px 3px rgba(0, 0, 0, 0.34),
+    0 0 7px 2px rgba(46, 34, 18, 0.34);
 }
 
 .fft-window select {
@@ -762,10 +867,11 @@ select {
   border: 0;
   border-radius: 2px;
   appearance: none;
-  background: linear-gradient(180deg, #060504 0%, #17140e 48%, #0c0a07 100%);
+  background: linear-gradient(180deg, #050403 0%, #14110c 48%, #0a0806 100%);
   box-shadow:
-    inset 0 2px 5px rgba(0, 0, 0, 0.95),
-    inset 0 0 0 1px rgba(0, 0, 0, 0.85);
+    inset 0 3px 6px rgba(0, 0, 0, 0.98),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.8),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.9);
   color: var(--amber);
   font-family: var(--mono);
   font-size: 13px;
@@ -788,11 +894,17 @@ select {
   width: 26px;
   border-radius: 2px;
   pointer-events: none;
-  background: linear-gradient(180deg, #d6d1c2 0%, #b0aa9c 46%, #8b8677 100%);
+  background-color: #6f6a60;
+  background-image:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.34) 0px, rgba(255, 255, 255, 0) 2px),
+    var(--brush),
+    linear-gradient(180deg, #8a8478 0%, #6b665c 48%, #504b43 100%);
+  background-size: auto, 110px 110px, auto;
+  background-blend-mode: normal, soft-light, normal;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.7),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.28),
-    0 1px 2px rgba(0, 0, 0, 0.6);
+    inset 0 1px 0 rgba(255, 255, 255, 0.34),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.4),
+    0 1px 3px rgba(0, 0, 0, 0.75);
 }
 
 .chev::after {
@@ -803,8 +915,8 @@ select {
   width: 6px;
   height: 6px;
   margin: -5px 0 0 -3px;
-  border-right: 1.6px solid #2b281f;
-  border-bottom: 1.6px solid #2b281f;
+  border-right: 1.6px solid #1d1b15;
+  border-bottom: 1.6px solid #1d1b15;
   transform: rotate(45deg);
 }
 
@@ -823,20 +935,22 @@ select {
 .ctrl input[type="range"]::-webkit-slider-runnable-track {
   height: 5px;
   border-radius: 3px;
-  background: linear-gradient(180deg, #070604 0%, #141310 70%, #0a0906 100%);
+  background: linear-gradient(180deg, #050403 0%, #121110 68%, #080706 100%);
   box-shadow:
-    inset 0 1px 2px rgba(0, 0, 0, 0.95),
-    inset 0 0 0 1px rgba(0, 0, 0, 0.7),
-    0 1px 0 rgba(255, 255, 255, 0.4);
+    inset 0 2px 3px rgba(0, 0, 0, 0.98),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.8),
+    0 1px 0 rgba(255, 255, 255, 0.46),
+    0 0 5px 1px rgba(44, 32, 17, 0.34);
 }
 
 .ctrl input[type="range"]::-moz-range-track {
   height: 5px;
   border-radius: 3px;
-  background: linear-gradient(180deg, #070604 0%, #141310 70%, #0a0906 100%);
+  background: linear-gradient(180deg, #050403 0%, #121110 68%, #080706 100%);
   box-shadow:
-    inset 0 1px 2px rgba(0, 0, 0, 0.95),
-    0 1px 0 rgba(255, 255, 255, 0.4);
+    inset 0 2px 3px rgba(0, 0, 0, 0.98),
+    0 1px 0 rgba(255, 255, 255, 0.46),
+    0 0 5px 1px rgba(44, 32, 17, 0.34);
 }
 
 .ctrl input[type="range"]::-webkit-slider-thumb {
@@ -845,22 +959,28 @@ select {
   height: 21px;
   margin-top: -8px;
   border-radius: 50%;
-  border: 1px solid #464239;
+  border: 1px solid rgba(46, 41, 33, 0.85);
   background-image: var(--knob);
+  background-size: auto, auto, auto, auto, 120px 120px, auto;
+  background-blend-mode: normal, normal, normal, normal, soft-light, normal;
   box-shadow:
-    0 2px 3px rgba(0, 0, 0, 0.55),
-    0 4px 7px rgba(0, 0, 0, 0.25);
+    0 1px 1px rgba(0, 0, 0, 0.6),
+    0 3px 5px rgba(0, 0, 0, 0.42),
+    0 6px 12px rgba(0, 0, 0, 0.24);
 }
 
 .ctrl input[type="range"]::-moz-range-thumb {
   width: 21px;
   height: 21px;
   border-radius: 50%;
-  border: 1px solid #464239;
+  border: 1px solid rgba(46, 41, 33, 0.85);
   background-image: var(--knob);
+  background-size: auto, auto, auto, auto, 120px 120px, auto;
+  background-blend-mode: normal, normal, normal, normal, soft-light, normal;
   box-shadow:
-    0 2px 3px rgba(0, 0, 0, 0.55),
-    0 4px 7px rgba(0, 0, 0, 0.25);
+    0 1px 1px rgba(0, 0, 0, 0.6),
+    0 3px 5px rgba(0, 0, 0, 0.42),
+    0 6px 12px rgba(0, 0, 0, 0.24);
 }
 
 .ctrl input[type="range"]:active::-webkit-slider-thumb {
