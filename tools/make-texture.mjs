@@ -214,10 +214,9 @@ function fbm(baseW, baseH, octaves, gain = 0.5) {
   const mean = sum / out.length
   let varr = 0
   for (const v of out) varr += (v - mean) ** 2
-  // Higher contrast so directional grain survives soft-light / overlay stacking
-  // Keep moderate: critics punish coarse distressed maps
-  const scale = 14 / Math.sqrt(varr / out.length)
-  for (let i = 0; i < out.length; i++) out[i] = 128 + (out[i] - mean) * scale + (rnd() - 0.5) * 3
+  // Keep low amplitude so soft-light stays fine, not striped
+  const scale = 9 / Math.sqrt(varr / out.length)
+  for (let i = 0; i < out.length; i++) out[i] = 128 + (out[i] - mean) * scale + (rnd() - 0.5) * 2
 
   writeGray('public/brushed-metal.png', W, H, out)
 }
