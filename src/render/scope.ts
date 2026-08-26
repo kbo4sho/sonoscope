@@ -36,46 +36,27 @@ function labelHz(hz: number): string {
   return String(hz)
 }
 
-/** Static tube grain, built once and tiled. */
-function grainTile(ctx: CanvasRenderingContext2D): CanvasPattern | null {
-  const size = 96
-  const tile = document.createElement('canvas')
-  tile.width = size
-  tile.height = size
-  const tctx = tile.getContext('2d')
-  if (!tctx) return null
-  const img = tctx.createImageData(size, size)
-  for (let i = 0; i < img.data.length; i += 4) {
-    const v = 120 + Math.random() * 70
-    img.data[i] = v
-    img.data[i + 1] = v
-    img.data[i + 2] = v
-    img.data[i + 3] = 255
-  }
-  tctx.putImageData(img, 0, 0)
-  return ctx.createPattern(tile, 'repeat')
-}
-
 export class Scope {
   private canvas: HTMLCanvasElement
   private ctx: CanvasRenderingContext2D
   private width = 0
   private height = 0
   private dpr = 0
-  private glass: CanvasGradient | null = null
-  private plot: CanvasGradient | null = null
-  private grain: CanvasPattern | null = null
+  private barFace: CanvasGradient | null = null
+  private barFaceH = 0
+  private staticLayer: HTMLCanvasElement | null = null
+  private staticKey = ''
 
   constructor(canvas: HTMLCanvasElement) {
-    const ctx = canvas.getContext('2d')
+    const ctx = canvas.getContext('2d', { alpha: false })
     if (!ctx) throw new Error('Canvas unsupported')
     this.canvas = canvas
     this.ctx = ctx
-    this.grain = grainTile(ctx)
   }
 
   resize(): { plotWidth: number } {
-    const dpr = Math.max(1, window.devicePixelRatio || 1)
+    // Cap DPR so retina phones don't 3–4× the fill cost every frame
+    const dpr = Math.min(2, Math.max(1, window.devicePixelRatio || 1))
     const rect = this.canvas.getBoundingClientRect()
     const w = Math.max(280, Math.floor(rect.width))
     const h = Math.max(200, Math.floor(rect.height))
@@ -86,8 +67,9 @@ export class Scope {
       this.canvas.width = Math.floor(w * dpr)
       this.canvas.height = Math.floor(h * dpr)
       this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-      this.glass = null
-      this.plot = null
+      this.barFace = null
+      this.staticLayer = null
+      this.staticKey = ''
     }
     return { plotWidth: w - 54 - 18 }
   }
@@ -113,8 +95,7 @@ export class Scope {
     const dbMin = opts.dbMin ?? DB_MIN
     const dbMax = opts.dbMax ?? DB_MAX
 
-    this.screen(w, h)
-    this.grid(left, top, plotW, plotH, dbMin, dbMax)
+    this.blitStatic(left, top, plotW, plotH, dbMin, dbMax)
     this.bars(opts.bands, opts.hold, left, top, plotW, plotH, dbMin, dbMax)
 
     if (opts.live && opts.peakDb > -70) {
@@ -123,96 +104,23 @@ export class Scope {
     if (opts.live && opts.centroidHz > F_MIN) {
       this.marker(opts.centroidHz, left, top, plotW, plotH, true)
     }
-
-    this.axes(left, top, plotW, plotH)
-    this.dbLabels(left, top, plotH, dbMin, dbMax)
-    this.hzScale(left, top + plotH, plotW)
-    this.vignette(w, h)
   }
 
-  /** Phosphor face: near-black warm glass, faintly brighter toward the middle. */
-  private screen(w: number, h: number): void {
-    const { ctx } = this
-    if (!this.glass) {
-      const g = ctx.createRadialGradient(w * 0.5, h * 0.42, 0, w * 0.5, h * 0.42, Math.max(w, h) * 0.72)
-      g.addColorStop(0, SCREEN_LIT)
-      g.addColorStop(0.6, '#1c1c1b')
-      g.addColorStop(1, SCREEN)
-      this.glass = g
+  /** Screen, grid, and axes change rarely — paint once to an offscreen buffer. */
+  private blitStatic(left: number, top: number, plotW: number, plotH: number, dbMin: number, dbMax: number): void {
+    const key = `${this.width}x${this.height}@${this.dpr}:${dbMin}:${dbMax}`
+    if (!this.staticLayer || this.staticKey !== key) {
+      const layer = document.createElement('canvas')
+      layer.width = this.canvas.width
+      layer.height = this.canvas.height
+      const lctx = layer.getContext('2d', { alpha: false })
+      if (!lctx) return
+      lctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0)
+      paintStatic(lctx, this.width, this.height, left, top, plotW, plotH, dbMin, dbMax)
+      this.staticLayer = layer
+      this.staticKey = key
     }
-    ctx.clearRect(0, 0, w, h)
-    ctx.fillStyle = this.glass
-    ctx.fillRect(0, 0, w, h)
-    if (this.grain) {
-      ctx.save()
-      ctx.globalAlpha = 0.05
-      ctx.fillStyle = this.grain
-      ctx.fillRect(0, 0, w, h)
-      ctx.restore()
-    }
-  }
-
-  private vignette(w: number, h: number): void {
-    const { ctx } = this
-    const g = ctx.createRadialGradient(w * 0.5, h * 0.48, Math.min(w, h) * 0.34, w * 0.5, h * 0.48, Math.max(w, h) * 0.68)
-    g.addColorStop(0, 'rgba(0, 0, 0, 0)')
-    g.addColorStop(1, 'rgba(0, 0, 0, 0.24)')
-    ctx.fillStyle = g
-    ctx.fillRect(0, 0, w, h)
-  }
-
-  private grid(x: number, y: number, w: number, h: number, dbMin: number, dbMax: number): void {
-    const { ctx } = this
-    ctx.save()
-    ctx.beginPath()
-    ctx.rect(x, y, w, h)
-    ctx.clip()
-
-    // Lift the plot rectangle a shade above the surrounding margin without
-    // flattening the tube's centre glow.
-    if (!this.plot) {
-      const p = ctx.createLinearGradient(0, y, 0, y + h)
-      p.addColorStop(0, PLOT_TOP)
-      p.addColorStop(1, PLOT_BOTTOM)
-      this.plot = p
-    }
-    ctx.save()
-    ctx.globalAlpha = 0.22
-    ctx.fillStyle = this.plot
-    ctx.fillRect(x, y, w, h)
-    ctx.restore()
-    ctx.lineWidth = 1
-
-    for (let db = 0; db >= dbMin; db -= 10) {
-      const gy = Math.round(dbY(db, y, h, dbMin, dbMax)) + 0.5
-      ctx.strokeStyle = GRID
-      ctx.beginPath()
-      ctx.moveTo(x, gy)
-      ctx.lineTo(x + w, gy)
-      ctx.stroke()
-    }
-
-    for (const hz of TICKS) {
-      if (hz < F_MIN || hz > F_MAX) continue
-      const gx = Math.round(freqX(hz, x, w)) + 0.5
-      ctx.strokeStyle = MAJOR.has(hz) ? GRID_MAJOR : GRID
-      ctx.beginPath()
-      ctx.moveTo(gx, y)
-      ctx.lineTo(gx, y + h)
-      ctx.stroke()
-    }
-    ctx.restore()
-  }
-
-  private axes(x: number, y: number, w: number, h: number): void {
-    const { ctx } = this
-    ctx.strokeStyle = AXIS
-    ctx.lineWidth = 1
-    ctx.beginPath()
-    ctx.moveTo(Math.round(x) + 0.5, y)
-    ctx.lineTo(Math.round(x) + 0.5, Math.round(y + h) + 0.5)
-    ctx.lineTo(Math.round(x + w) + 0.5, Math.round(y + h) + 0.5)
-    ctx.stroke()
+    this.ctx.drawImage(this.staticLayer, 0, 0, this.width, this.height)
   }
 
   private bars(
@@ -231,9 +139,13 @@ export class Scope {
     const bw = w / bands.length
     const base = y + h
 
-    const face = ctx.createLinearGradient(0, y, 0, base)
-    face.addColorStop(0, BAR_TOP)
-    face.addColorStop(1, BAR_BOTTOM)
+    if (!this.barFace || this.barFaceH !== h) {
+      const face = ctx.createLinearGradient(0, y, 0, base)
+      face.addColorStop(0, BAR_TOP)
+      face.addColorStop(1, BAR_BOTTOM)
+      this.barFace = face
+      this.barFaceH = h
+    }
 
     ctx.save()
     ctx.beginPath()
@@ -248,11 +160,8 @@ export class Scope {
       const barH = base - by
 
       if (barH > 0.5) {
-        ctx.fillStyle = face
+        ctx.fillStyle = this.barFace
         ctx.fillRect(bx, by, barW, barH)
-        // lit top edge so the columns read as illuminated segments
-        ctx.fillStyle = 'rgba(255, 252, 238, 0.5)'
-        ctx.fillRect(bx, by, barW, 1)
       }
 
       const holdDb = hold[i]
@@ -279,46 +188,105 @@ export class Scope {
     ctx.stroke()
     ctx.restore()
   }
+}
 
-  private dbLabels(left: number, top: number, h: number, dbMin: number, dbMax: number): void {
-    const { ctx } = this
-    ctx.fillStyle = LABEL
-    ctx.font = '400 10px "IBM Plex Mono", ui-monospace, monospace'
-    ctx.textAlign = 'right'
-    ctx.textBaseline = 'middle'
-    for (let db = 0; db >= dbMin; db -= 10) {
-      ctx.fillText(`${db}`, left - 9, dbY(db, top, h, dbMin, dbMax))
-    }
-    ctx.save()
-    ctx.translate(13, top + h / 2)
-    ctx.rotate(-Math.PI / 2)
-    ctx.textAlign = 'center'
-    ctx.fillStyle = LABEL_DIM
-    ctx.font = '400 10px "IBM Plex Mono", ui-monospace, monospace'
-    ctx.fillText('dBFS', 0, 0)
-    ctx.restore()
+function paintStatic(
+  ctx: CanvasRenderingContext2D,
+  w: number,
+  h: number,
+  left: number,
+  top: number,
+  plotW: number,
+  plotH: number,
+  dbMin: number,
+  dbMax: number,
+): void {
+  const glass = ctx.createRadialGradient(w * 0.5, h * 0.42, 0, w * 0.5, h * 0.42, Math.max(w, h) * 0.72)
+  glass.addColorStop(0, SCREEN_LIT)
+  glass.addColorStop(0.6, '#1c1c1b')
+  glass.addColorStop(1, SCREEN)
+  ctx.fillStyle = glass
+  ctx.fillRect(0, 0, w, h)
+
+  ctx.save()
+  ctx.beginPath()
+  ctx.rect(left, top, plotW, plotH)
+  ctx.clip()
+  const plot = ctx.createLinearGradient(0, top, 0, top + plotH)
+  plot.addColorStop(0, PLOT_TOP)
+  plot.addColorStop(1, PLOT_BOTTOM)
+  ctx.globalAlpha = 0.22
+  ctx.fillStyle = plot
+  ctx.fillRect(left, top, plotW, plotH)
+  ctx.globalAlpha = 1
+  ctx.lineWidth = 1
+
+  for (let db = 0; db >= dbMin; db -= 10) {
+    const gy = Math.round(dbY(db, top, plotH, dbMin, dbMax)) + 0.5
+    ctx.strokeStyle = GRID
+    ctx.beginPath()
+    ctx.moveTo(left, gy)
+    ctx.lineTo(left + plotW, gy)
+    ctx.stroke()
   }
 
-  private hzScale(x: number, y: number, w: number): void {
-    const { ctx } = this
-    ctx.lineWidth = 1
-    ctx.font = '400 10px "IBM Plex Mono", ui-monospace, monospace'
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'top'
+  for (const hz of TICKS) {
+    if (hz < F_MIN || hz > F_MAX) continue
+    const gx = Math.round(freqX(hz, left, plotW)) + 0.5
+    ctx.strokeStyle = MAJOR.has(hz) ? GRID_MAJOR : GRID
+    ctx.beginPath()
+    ctx.moveTo(gx, top)
+    ctx.lineTo(gx, top + plotH)
+    ctx.stroke()
+  }
+  ctx.restore()
 
-    for (const hz of TICKS) {
-      if (hz < F_MIN || hz > F_MAX) continue
-      const gx = Math.round(freqX(hz, x, w)) + 0.5
-      const major = MAJOR.has(hz)
-      ctx.beginPath()
-      ctx.moveTo(gx, y)
-      ctx.lineTo(gx, y + (major ? 7 : 3))
-      ctx.strokeStyle = major ? AXIS : 'rgba(214, 208, 186, 0.2)'
-      ctx.stroke()
-      if (major) {
-        ctx.fillStyle = LABEL
-        ctx.fillText(labelHz(hz), gx, y + 12)
-      }
+  ctx.strokeStyle = AXIS
+  ctx.lineWidth = 1
+  ctx.beginPath()
+  ctx.moveTo(Math.round(left) + 0.5, top)
+  ctx.lineTo(Math.round(left) + 0.5, Math.round(top + plotH) + 0.5)
+  ctx.lineTo(Math.round(left + plotW) + 0.5, Math.round(top + plotH) + 0.5)
+  ctx.stroke()
+
+  ctx.fillStyle = LABEL
+  ctx.font = '400 10px "IBM Plex Mono", ui-monospace, monospace'
+  ctx.textAlign = 'right'
+  ctx.textBaseline = 'middle'
+  for (let db = 0; db >= dbMin; db -= 10) {
+    ctx.fillText(`${db}`, left - 9, dbY(db, top, plotH, dbMin, dbMax))
+  }
+  ctx.save()
+  ctx.translate(13, top + plotH / 2)
+  ctx.rotate(-Math.PI / 2)
+  ctx.textAlign = 'center'
+  ctx.fillStyle = LABEL_DIM
+  ctx.fillText('dBFS', 0, 0)
+  ctx.restore()
+
+  const axisY = top + plotH
+  ctx.lineWidth = 1
+  ctx.font = '400 10px "IBM Plex Mono", ui-monospace, monospace'
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'top'
+  for (const hz of TICKS) {
+    if (hz < F_MIN || hz > F_MAX) continue
+    const gx = Math.round(freqX(hz, left, plotW)) + 0.5
+    const major = MAJOR.has(hz)
+    ctx.beginPath()
+    ctx.moveTo(gx, axisY)
+    ctx.lineTo(gx, axisY + (major ? 7 : 3))
+    ctx.strokeStyle = major ? AXIS : 'rgba(214, 208, 186, 0.2)'
+    ctx.stroke()
+    if (major) {
+      ctx.fillStyle = LABEL
+      ctx.fillText(labelHz(hz), gx, axisY + 12)
     }
   }
+
+  const vig = ctx.createRadialGradient(w * 0.5, h * 0.48, Math.min(w, h) * 0.34, w * 0.5, h * 0.48, Math.max(w, h) * 0.68)
+  vig.addColorStop(0, 'rgba(0, 0, 0, 0)')
+  vig.addColorStop(1, 'rgba(0, 0, 0, 0.24)')
+  ctx.fillStyle = vig
+  ctx.fillRect(0, 0, w, h)
 }

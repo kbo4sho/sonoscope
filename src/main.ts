@@ -176,6 +176,13 @@ function demoBands(count: number, t: number): { bands: Band[]; hold: number[] } 
   return { bands, hold }
 }
 
+function setText(el: Element, value: string): void {
+  if (el.textContent !== value) el.textContent = value
+}
+
+let lastMeta = { rate: '', fft: '', df: '', signal: false }
+let lastReadout = { peak: '', peakDb: '', note: '', cents: '', centroid: '', rms: '' }
+
 function paint(): void {
   const { plotWidth } = scope.resize()
   const count = bandCountForWidth(plotWidth)
@@ -227,37 +234,85 @@ function paint(): void {
     live: drawLive,
   })
 
-  ui.statusRate.textContent = live ? `${Math.round(rate)} Hz` : demoMode ? `${Math.round(rate)} Hz` : '— Hz'
-  ui.statusFft.textContent = `FFT ${fftSize}`
-  ui.statusDf.textContent = `Δf ${formatDeltaF(binHz)}`
+  const rateText = live || demoMode ? `${Math.round(rate)} Hz` : '— Hz'
+  const fftText = `FFT ${fftSize}`
+  const dfText = `Δf ${formatDeltaF(binHz)}`
+  if (rateText !== lastMeta.rate) {
+    setText(ui.statusRate, rateText)
+    lastMeta.rate = rateText
+  }
+  if (fftText !== lastMeta.fft) {
+    setText(ui.statusFft, fftText)
+    lastMeta.fft = fftText
+  }
+  if (dfText !== lastMeta.df) {
+    setText(ui.statusDf, dfText)
+    lastMeta.df = dfText
+  }
 
   const belowFloor = (!live && !demoMode) || peak.db < -72
-  ui.metricArticles.forEach((el) => el.classList.toggle('has-signal', (live || demoMode) && !belowFloor))
+  const hasSignal = (live || demoMode) && !belowFloor
+  if (hasSignal !== lastMeta.signal) {
+    ui.metricArticles.forEach((el) => el.classList.toggle('has-signal', hasSignal))
+    lastMeta.signal = hasSignal
+  }
+
+  let peakT: string
+  let peakDbT: string
+  let noteT: string
+  let centsT: string
+  let centroidT: string
+  let rmsT: string
 
   if (demoMode && !live) {
-    ui.peak.textContent = 'Below floor'
-    ui.peakDb.textContent = 'below floor'
-    ui.note.textContent = 'A4 = 440'
-    ui.cents.textContent = ''
-    ui.centroid.textContent = '—'
-    ui.rms.textContent = '—'
+    peakT = 'Below floor'
+    peakDbT = 'below floor'
+    noteT = 'A4 = 440'
+    centsT = ''
+    centroidT = '—'
+    rmsT = '—'
   } else if (belowFloor) {
-    ui.peak.textContent = live ? 'Below floor' : '—'
-    ui.peakDb.textContent = live ? 'below floor' : 'awaiting'
-    ui.note.textContent = 'A4 = 440'
-    ui.cents.textContent = ''
-    ui.centroid.textContent = '—'
-    ui.rms.textContent = '—'
+    peakT = live ? 'Below floor' : '—'
+    peakDbT = live ? 'below floor' : 'awaiting'
+    noteT = 'A4 = 440'
+    centsT = ''
+    centroidT = '—'
+    rmsT = '—'
   } else {
-    ui.peak.textContent = formatHz(peak.hz)
-    ui.peakDb.textContent = formatDb(peak.db)
+    peakT = formatHz(peak.hz)
+    peakDbT = formatDb(peak.db)
     const pitch = freqToPitch(peak.hz)
-    ui.note.textContent = pitch ? pitch.label : '—'
-    ui.cents.textContent = pitch
+    noteT = pitch ? pitch.label : '—'
+    centsT = pitch
       ? `${pitch.cents === 0 ? '0' : pitch.cents > 0 ? `+${pitch.cents}` : pitch.cents} cents`
       : 'out of note range'
-    ui.centroid.textContent = formatHz(centroid)
-    ui.rms.textContent = formatDb(rms)
+    centroidT = formatHz(centroid)
+    rmsT = formatDb(rms)
+  }
+
+  if (peakT !== lastReadout.peak) {
+    setText(ui.peak, peakT)
+    lastReadout.peak = peakT
+  }
+  if (peakDbT !== lastReadout.peakDb) {
+    setText(ui.peakDb, peakDbT)
+    lastReadout.peakDb = peakDbT
+  }
+  if (noteT !== lastReadout.note) {
+    setText(ui.note, noteT)
+    lastReadout.note = noteT
+  }
+  if (centsT !== lastReadout.cents) {
+    setText(ui.cents, centsT)
+    lastReadout.cents = centsT
+  }
+  if (centroidT !== lastReadout.centroid) {
+    setText(ui.centroid, centroidT)
+    lastReadout.centroid = centroidT
+  }
+  if (rmsT !== lastReadout.rms) {
+    setText(ui.rms, rmsT)
+    lastReadout.rms = rmsT
   }
 
   requestAnimationFrame(paint)

@@ -21,17 +21,14 @@
   --script: "Great Vibes", "Segoe Script", cursive;
 
   --brush: url("/sonoscope/brushed-metal.png");
-  --plate: url("/sonoscope/bar-metal-tile.png");
   --wear: url("/sonoscope/panel-wear.png");
   --wood: url("/sonoscope/wood-grain.png");
-  /* turned-aluminium knob: matte dome, faint pointer score, worn chamfer */
+  /* flat machined disc: satin face, center dimple, thin rim — matches reference knobs */
   --knob:
-    radial-gradient(circle at 40% 30%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 48%),
-    radial-gradient(circle at 62% 82%, rgba(38, 32, 22, 0.28) 0%, rgba(38, 32, 22, 0) 46%),
-    linear-gradient(90deg, rgba(255, 255, 255, 0) calc(50% - 1.6px), rgba(52, 47, 38, 0.34) calc(50% - 0.8px), rgba(52, 47, 38, 0.34) calc(50% + 0.8px), rgba(255, 255, 255, 0) calc(50% + 1.6px)),
-    radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0) 58%, rgba(28, 22, 14, 0.22) 76%, rgba(255, 255, 255, 0.18) 90%, rgba(46, 40, 30, 0.55) 100%),
-    var(--brush),
-    linear-gradient(168deg, #cfc9bd 0%, #b4aea2 32%, #968f83 64%, #7a7468 90%, #968f83 100%);
+    radial-gradient(circle at 50% 50%, rgba(28, 22, 14, 0.45) 0 14%, rgba(28, 22, 14, 0) 22%),
+    radial-gradient(circle at 38% 32%, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0) 42%),
+    radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0) 62%, rgba(40, 34, 26, 0.28) 78%, rgba(255, 255, 255, 0.35) 92%, rgba(52, 46, 36, 0.55) 100%),
+    linear-gradient(165deg, #d8d2c6 0%, #bdb7ab 45%, #9e978b 100%);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
@@ -134,42 +131,38 @@ select {
     linear-gradient(270deg, rgba(12, 8, 3, 0.78) 0px, rgba(12, 8, 3, 0.2) 1.8px, rgba(255, 255, 255, 0.14) 2.6px, rgba(255, 255, 255, 0) 7px),
     linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0px, rgba(255, 255, 255, 0) 2px),
     linear-gradient(0deg, rgba(14, 9, 4, 0.45) 0px, rgba(14, 9, 4, 0) 3px),
-    /* grime that has crept in from the rack ears and settled unevenly */
-    radial-gradient(ellipse 46% 15% at 4% 0%, rgba(48, 36, 20, 0.28), rgba(48, 36, 20, 0) 74%),
-    radial-gradient(ellipse 26% 9% at 96% 3%, rgba(40, 29, 15, 0.36), rgba(40, 29, 15, 0) 68%),
-    radial-gradient(ellipse 30% 24% at 105% 30%, rgba(42, 31, 17, 0.32), rgba(42, 31, 17, 0) 72%),
-    radial-gradient(ellipse 58% 14% at 80% 101%, rgba(38, 28, 15, 0.3), rgba(38, 28, 15, 0) 78%),
-    radial-gradient(ellipse 22% 18% at -6% 66%, rgba(44, 33, 18, 0.26), rgba(44, 33, 18, 0) 74%),
-    /* tarnish pooled along control rows and status cut */
-    linear-gradient(180deg, rgba(36, 26, 14, 0) 8%, rgba(36, 26, 14, 0.08) 14%, rgba(36, 26, 14, 0) 22%),
-    linear-gradient(180deg, rgba(36, 26, 14, 0) 58%, rgba(36, 26, 14, 0.1) 66%, rgba(36, 26, 14, 0.06) 78%, rgba(36, 26, 14, 0) 88%),
-    /* burnished patch where a hand has rested for thirty years */
-    radial-gradient(ellipse 34% 12% at 30% 88%, rgba(255, 250, 238, 0.08), rgba(255, 250, 238, 0) 70%),
-    /* restrained rack-ear shade only — avoid soft digital wash across the plate */
-    linear-gradient(90deg, rgba(26, 19, 9, 0.14) 0%, rgba(26, 19, 9, 0) 7%, rgba(26, 19, 9, 0) 86%, rgba(26, 19, 9, 0.16) 100%),
+    /* lighter rack-ear shade — keep metal calm like the reference */
+    radial-gradient(ellipse 40% 12% at 4% 0%, rgba(48, 36, 20, 0.14), rgba(48, 36, 20, 0) 74%),
+    radial-gradient(ellipse 22% 8% at 96% 3%, rgba(40, 29, 15, 0.18), rgba(40, 29, 15, 0) 68%),
+    radial-gradient(ellipse 26% 18% at 105% 30%, rgba(42, 31, 17, 0.14), rgba(42, 31, 17, 0) 72%),
+    radial-gradient(ellipse 50% 12% at 80% 101%, rgba(38, 28, 15, 0.14), rgba(38, 28, 15, 0) 78%),
+    radial-gradient(ellipse 18% 14% at -6% 66%, rgba(44, 33, 18, 0.12), rgba(44, 33, 18, 0) 74%),
+    linear-gradient(180deg, rgba(36, 26, 14, 0) 10%, rgba(36, 26, 14, 0.04) 16%, rgba(36, 26, 14, 0) 24%),
+    linear-gradient(180deg, rgba(36, 26, 14, 0) 60%, rgba(36, 26, 14, 0.05) 70%, rgba(36, 26, 14, 0) 88%),
+    radial-gradient(ellipse 34% 12% at 30% 88%, rgba(255, 250, 238, 0.05), rgba(255, 250, 238, 0) 70%),
+    linear-gradient(90deg, rgba(26, 19, 9, 0.08) 0%, rgba(26, 19, 9, 0) 8%, rgba(26, 19, 9, 0) 88%, rgba(26, 19, 9, 0.1) 100%),
     var(--wear),
     var(--brush),
     linear-gradient(
       180deg,
-      #c4bdb5 0%,
-      #bbb4ac 18%,
-      #b5aea6 42%,
-      #bdb6ae 64%,
-      #b9b2aa 84%,
-      #b0a9a1 100%
+      #c9c2ba 0%,
+      #c2bbb3 20%,
+      #bcb5ad 45%,
+      #c4bdb5 70%,
+      #beb7af 100%
     );
   background-size:
     auto, auto, auto, auto,
     auto, auto, auto, auto, auto, auto, auto, auto,
     auto,
-    900px 1400px,
-    72px 72px,
+    1600px 2200px,
+    480px 480px,
     auto;
   background-position:
     0 0, 0 0, 0 0, 0 0,
     0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0,
     0 0,
-    -90px -140px,
+    -40px -60px,
     0 0,
     0 0;
   background-repeat: repeat;
@@ -180,40 +173,19 @@ select {
     soft-light,
     soft-light,
     normal;
+  /* Isolate canvas paints from the metal stack so spectrum frames stay cheap */
+  contain: paint;
   overflow: hidden;
-  /* hard cabinet contact — no soft floating drop */
   box-shadow:
     0 0 0 1px rgba(10, 6, 2, 0.9),
     0 2px 0 rgba(0, 0, 0, 0.55),
     0 -1px 0 rgba(0, 0, 0, 0.45);
 }
 
-/* surface wear sits on the panel but under every control */
+/* Static wear maps only — no live SVG filters (those starved the paint loop). */
 .chassis::before,
-.chassis::after,
-.wear-scuff {
-  content: "";
-  position: absolute;
-  z-index: 0;
-  inset: 0;
-  pointer-events: none;
-  mix-blend-mode: soft-light;
-}
-
-.chassis::before {
-  filter: url(#patina);
-}
-
 .chassis::after {
-  filter: url(#fleck);
-}
-
-/* the scuff pass is offset and scaled so it never lines up with the patina */
-.wear-scuff {
-  inset: -12% -8%;
-  opacity: 0.85;
-  filter: url(#scuff);
-  mix-blend-mode: overlay;
+  content: none;
 }
 
 /* ——————————————————————— lamps ——————————————————————— */
@@ -332,16 +304,20 @@ select {
 /* ——————————————————————— transport switches ——————————————————————— */
 
 .transport {
-  flex: 0 0 auto;
+  flex: 0 1 auto;
   display: flex;
   align-items: flex-end;
-  gap: 10px;
+  justify-content: flex-end;
+  gap: 6px;
+  min-width: 0;
+  max-width: 58%;
 }
 
 .rack-btn {
   position: relative;
-  flex: 0 0 48px;
-  min-width: 0;
+  flex: 1 1 0;
+  min-width: 36px;
+  max-width: 52px;
   padding: 0;
   border: 0;
   background: none;
@@ -394,16 +370,16 @@ select {
 
 /* The cap sits in a black surround that shows most at the bottom, and the whole
    assembly throws a soft contact shadow down onto the panel. */
+/* Transport: dark recessed push-buttons (FILE / 440 / STOP) and a Listen rocker. */
 .rb-housing {
   display: block;
-  height: 21px;
-  padding: 1.5px 1.5px 3px;
+  height: 22px;
+  padding: 2px;
   border-radius: 2px;
-  background: #12100c;
+  background: #0e0c09;
   box-shadow:
-    inset 0 1px 1px rgba(0, 0, 0, 0.95),
-    0 1px 0 rgba(255, 255, 255, 0.22),
-    0 1px 2px rgba(0, 0, 0, 0.45);
+    inset 0 1px 2px rgba(0, 0, 0, 0.95),
+    0 1px 0 rgba(255, 255, 255, 0.28);
 }
 
 .rb-well {
@@ -413,42 +389,42 @@ select {
   justify-content: stretch;
   height: 100%;
   border-radius: 1px;
+  background: #14110c;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.55);
 }
 
 .rb-cap {
   display: block;
   flex: 1 1 auto;
   border-radius: 1px;
-  background-color: #1a1712;
-  background-image:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0px, rgba(255, 255, 255, 0) 1px),
-    linear-gradient(180deg, #2a261f 0%, #15130f 55%, #0c0b09 100%);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0px, rgba(255, 255, 255, 0) 2px),
+    linear-gradient(180deg, #2c2820 0%, #1a1712 48%, #12100c 100%);
   box-shadow:
-    inset 0 0 0 1px rgba(0, 0, 0, 0.7),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    0 1px 0 rgba(0, 0, 0, 0.5);
+    inset 0 0 0 1px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .rack-btn:hover:not(:disabled) .rb-cap {
-  filter: brightness(1.05);
+  filter: brightness(1.06);
 }
 
 .rack-btn:active:not(:disabled) .rb-cap {
-  background-image: linear-gradient(180deg, #0a0907 0%, #1a1712 100%);
-  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.85);
+  background: linear-gradient(180deg, #0c0b09 0%, #1a1712 100%);
+  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.9);
 }
 
-/* switch thrown: housing opens upward, cap sinks, chamber lamp shows */
+/* Listen (mic) active: black rocker with amber chamber lamp, matching reference */
 .rack-btn.is-active .rb-housing {
-  height: 26px;
-  margin-top: -6px;
+  height: 28px;
+  margin-top: -7px;
   padding: 2px;
-  background: #1c1914;
+  background: #16130e;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.12),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.5),
-    0 1px 0 rgba(255, 255, 255, 0.18),
-    0 1px 2px rgba(0, 0, 0, 0.45);
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.55),
+    0 1px 0 rgba(255, 255, 255, 0.2),
+    0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 .rack-btn.is-active .rb-well {
@@ -456,8 +432,8 @@ select {
   justify-content: flex-end;
   border-radius: 1px;
   background:
-    radial-gradient(ellipse 62% 54% at 50% 20%, rgba(255, 152, 36, 0.4), rgba(255, 150, 20, 0) 74%),
-    linear-gradient(180deg, #1c1710 0%, #0b0906 100%);
+    radial-gradient(ellipse 70% 60% at 50% 18%, rgba(255, 152, 36, 0.55), rgba(255, 150, 20, 0) 70%),
+    linear-gradient(180deg, #1a1510 0%, #080705 100%);
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.95);
 }
 
@@ -465,27 +441,36 @@ select {
   content: "";
   position: absolute;
   left: 50%;
-  top: 7px;
-  width: 5px;
-  height: 5px;
-  margin-left: -2.5px;
+  top: 6px;
+  width: 6px;
+  height: 6px;
+  margin-left: -3px;
   border-radius: 50%;
   background: radial-gradient(circle at 40% 34%, #fff0cd 0%, var(--amber) 55%, #c85f00 100%);
   box-shadow:
-    0 0 4px rgba(255, 160, 40, 0.95),
-    0 0 11px rgba(255, 140, 20, 0.7);
+    0 0 5px rgba(255, 160, 40, 0.95),
+    0 0 12px rgba(255, 140, 20, 0.65);
 }
 
 .rack-btn.is-active .rb-cap {
-  flex: 0 0 13px;
-  background: linear-gradient(180deg, #0b0a07 0%, #1c1a15 70%, #262319 100%);
+  flex: 0 0 12px;
+  background: linear-gradient(180deg, #0a0907 0%, #1c1a15 70%, #242119 100%);
   box-shadow:
     inset 0 1px 2px rgba(0, 0, 0, 0.9),
-    0 -1px 0 rgba(255, 255, 255, 0.1);
+    0 -1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* Stop matches File/440: same recessed push look, only slightly quieter when idle */
+#btn-stop:disabled {
+  opacity: 0.7;
+  cursor: default;
 }
 
 .rack-btn:disabled {
   cursor: default;
+}
+
+.rack-btn:disabled:not(#btn-stop) {
   opacity: 0.44;
 }
 
@@ -626,6 +611,9 @@ select {
     inset 0 0 0 1px rgba(0, 0, 0, 0.95),
     0 0 0 1px rgba(28, 20, 10, 0.45);
   overflow: hidden;
+  /* Promote spectrum to its own layer so metal stacks don't recomposite every frame */
+  contain: paint;
+  transform: translateZ(0);
 }
 
 .scope-chrome {
@@ -907,54 +895,47 @@ select {
 }
 
 .ctrl input[type="range"]::-webkit-slider-runnable-track {
-  height: 5px;
-  border-radius: 3px;
-  background: linear-gradient(180deg, #050403 0%, #121110 68%, #080706 100%);
+  height: 4px;
+  border-radius: 2px;
+  background: #0a0907;
   box-shadow:
-    inset 0 2px 3px rgba(0, 0, 0, 0.98),
-    inset 0 0 0 1px rgba(0, 0, 0, 0.8),
-    0 1px 0 rgba(255, 255, 255, 0.46),
-    0 0 5px 1px rgba(44, 32, 17, 0.34);
+    inset 0 1px 2px rgba(0, 0, 0, 0.95),
+    0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
 .ctrl input[type="range"]::-moz-range-track {
-  height: 5px;
-  border-radius: 3px;
-  background: linear-gradient(180deg, #050403 0%, #121110 68%, #080706 100%);
+  height: 4px;
+  border-radius: 2px;
+  background: #0a0907;
   box-shadow:
-    inset 0 2px 3px rgba(0, 0, 0, 0.98),
-    0 1px 0 rgba(255, 255, 255, 0.46),
-    0 0 5px 1px rgba(44, 32, 17, 0.34);
+    inset 0 1px 2px rgba(0, 0, 0, 0.95),
+    0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
 .ctrl input[type="range"]::-webkit-slider-thumb {
   appearance: none;
-  width: 21px;
-  height: 21px;
-  margin-top: -8px;
+  width: 22px;
+  height: 22px;
+  margin-top: -9px;
   border-radius: 50%;
-  border: 1px solid rgba(46, 41, 33, 0.85);
+  border: 1px solid rgba(40, 34, 26, 0.75);
   background-image: var(--knob);
-  background-size: auto, auto, auto, auto, 120px 120px, auto;
-  background-blend-mode: normal, normal, normal, normal, soft-light, normal;
+  background-size: auto;
   box-shadow:
-    0 1px 1px rgba(0, 0, 0, 0.6),
-    0 3px 5px rgba(0, 0, 0, 0.42),
-    0 6px 12px rgba(0, 0, 0, 0.24);
+    0 1px 1px rgba(0, 0, 0, 0.55),
+    0 2px 4px rgba(0, 0, 0, 0.35);
 }
 
 .ctrl input[type="range"]::-moz-range-thumb {
-  width: 21px;
-  height: 21px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
-  border: 1px solid rgba(46, 41, 33, 0.85);
+  border: 1px solid rgba(40, 34, 26, 0.75);
   background-image: var(--knob);
-  background-size: auto, auto, auto, auto, 120px 120px, auto;
-  background-blend-mode: normal, normal, normal, normal, soft-light, normal;
+  background-size: auto;
   box-shadow:
-    0 1px 1px rgba(0, 0, 0, 0.6),
-    0 3px 5px rgba(0, 0, 0, 0.42),
-    0 6px 12px rgba(0, 0, 0, 0.24);
+    0 1px 1px rgba(0, 0, 0, 0.55),
+    0 2px 4px rgba(0, 0, 0, 0.35);
 }
 
 .ctrl input[type="range"]:active::-webkit-slider-thumb {
@@ -1022,7 +1003,7 @@ select {
   }
 
   .rack-btn {
-    flex: 0 1 60px;
+    max-width: 60px;
   }
 }
 

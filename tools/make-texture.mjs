@@ -214,9 +214,9 @@ function fbm(baseW, baseH, octaves, gain = 0.5) {
   const mean = sum / out.length
   let varr = 0
   for (const v of out) varr += (v - mean) ** 2
-  // Keep low amplitude so soft-light stays fine, not striped
-  const scale = 7 / Math.sqrt(varr / out.length)
-  for (let i = 0; i < out.length; i++) out[i] = 128 + (out[i] - mean) * scale + (rnd() - 0.5) * 1.5
+  // Very subtle satin grain — reference metal is quiet, not scored
+  const scale = 2.8 / Math.sqrt(varr / out.length)
+  for (let i = 0; i < out.length; i++) out[i] = 128 + (out[i] - mean) * scale + (rnd() - 0.5) * 0.6
 
   writeGray('public/brushed-metal.png', W, H, out)
 }
@@ -243,8 +243,8 @@ function fbm(baseW, baseH, octaves, gain = 0.5) {
       const dv = v + warpV(u * 1.3, v * 0.7) * 0.06
       const c = cloud(du, dv)
       // bias dark so the map mostly darkens, with occasional polished bright patches
-      const stain = c > 0 ? c * 0.7 : c * 1.45
-      out[y * W + x] = 128 + stain * 50 + fineDirt(u, v) * 16 + (rnd() - 0.5) * 3
+      const stain = c > 0 ? c * 0.45 : c * 0.9
+      out[y * W + x] = 128 + stain * 28 + fineDirt(u, v) * 8 + (rnd() - 0.5) * 2
     }
   }
 
