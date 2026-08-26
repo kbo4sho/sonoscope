@@ -5,8 +5,8 @@
   --ink: #1b1914;
   --label: #29261f;
   --engrave: rgba(255, 255, 255, 0.46);
-  --seam-dark: rgba(18, 14, 8, 0.72);
-  --seam-lite: rgba(255, 255, 255, 0.3);
+  --seam-dark: rgba(18, 14, 8, 0.55);
+  --seam-lite: rgba(255, 255, 255, 0.22);
   /* warm brown a machined cut shows before it falls away to black */
   --cut: rgba(46, 34, 20, 0.9);
 
@@ -592,7 +592,7 @@ select {
   flex: 1 1 auto;
   min-height: 0;
   display: grid;
-  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-rows: minmax(0, 0.95fr) auto;
   position: relative;
   z-index: 1;
   border-top: 1.5px solid rgba(16, 11, 5, 0.8);
@@ -606,7 +606,7 @@ select {
   min-height: 0;
   display: flex;
   flex-direction: column;
-  padding: 13px 13px 7px;
+  padding: 8px 12px 4px;
 }
 
 /* polished chamfer around the tube opening — bright lip on every side,
@@ -615,10 +615,10 @@ select {
   flex: 1 1 auto;
   min-height: 0;
   display: flex;
-  padding: 10px;
+  padding: 6px;
   /* No frame of its own: the opening is milled straight into the console plate,
      so this stays transparent and the panel's own wear carries through. */
-  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(28, 20, 10, 0.05) 100%);
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(28, 20, 10, 0.04) 100%);
 }
 
 /* The opening is a real cut: the tool leaves a warm chamfer wall, the plate
@@ -756,18 +756,18 @@ select {
 }
 
 .metric-grid article {
-  min-height: 40px;
-  padding: 7px 14px 8px;
+  min-height: 52px;
+  padding: 10px 16px 11px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 3px;
+  gap: 5px;
 }
 
 .m-label {
-  font-size: 8.5px;
+  font-size: 9.5px;
   font-weight: 500;
-  letter-spacing: 0.19em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--label);
   text-shadow: 0 1px 0 var(--engrave);
@@ -781,9 +781,9 @@ select {
 }
 
 .m-read strong {
-  font-size: 10.5px;
+  font-size: 13px;
   font-weight: 500;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--ink);
   font-variant-numeric: tabular-nums;
@@ -800,12 +800,12 @@ select {
 }
 
 .ctrl {
-  min-height: 52px;
-  padding: 8px 14px 10px;
+  min-height: 64px;
+  padding: 11px 16px 13px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
 }
 
 .c-head {
