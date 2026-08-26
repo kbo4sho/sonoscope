@@ -12,7 +12,7 @@
   --amber-hot: #ffd58a;
   --amber-deep: #b45c00;
 
-  --bay-glass: #a8874c;
+  --bay-glass: #c4b48a;
   --lamp-off: #221d14;
 
   --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
@@ -468,8 +468,8 @@ select {
   padding: 0 15px;
   border-radius: 2px;
   background:
-    linear-gradient(180deg, rgba(60, 38, 8, 0.38) 0%, rgba(255, 240, 200, 0) 24%, rgba(255, 240, 200, 0.12) 78%, rgba(70, 46, 12, 0.22) 100%),
-    linear-gradient(180deg, #8b7040 0%, var(--bay-glass) 32%, #b19158 72%, #907447 100%);
+    linear-gradient(180deg, rgba(60, 38, 8, 0.22) 0%, rgba(255, 240, 200, 0) 24%, rgba(255, 240, 200, 0.18) 78%, rgba(70, 46, 12, 0.14) 100%),
+    linear-gradient(180deg, #a89462 0%, var(--bay-glass) 32%, #d2c49a 72%, #b8a678 100%);
   box-shadow:
     inset 0 2px 4px rgba(48, 30, 6, 0.5),
     inset 0 -1px 0 rgba(255, 240, 205, 0.4),
