@@ -5,8 +5,8 @@
   --ink: #1b1914;
   --label: #29261f;
   --engrave: rgba(255, 255, 255, 0.46);
-  --seam-dark: rgba(18, 14, 8, 0.55);
-  --seam-lite: rgba(255, 255, 255, 0.22);
+  --seam-dark: rgba(12, 9, 5, 0.78);
+  --seam-lite: rgba(255, 255, 255, 0.18);
   /* warm brown a machined cut shows before it falls away to black */
   --cut: rgba(46, 34, 20, 0.9);
 
@@ -336,7 +336,7 @@ select {
 
 .rack-btn {
   position: relative;
-  flex: 0 0 40px;
+  flex: 0 0 48px;
   min-width: 0;
   padding: 0;
   border: 0;
@@ -633,13 +633,13 @@ select {
   border-radius: 7px;
   background: #1a1a15;
   box-shadow:
-    inset 0 8px 12px -4px rgba(12, 8, 4, 0.95),
-    inset 0 -6px 10px -4px rgba(10, 7, 3, 0.85),
-    inset 7px 0 11px -5px rgba(18, 12, 6, 0.9),
-    inset -7px 0 11px -5px rgba(18, 12, 6, 0.9),
-    inset 0 0 0 1px rgba(0, 0, 0, 0.95),
-    0 0 0 1px rgba(36, 26, 14, 0.55),
-    0 1px 3px rgba(24, 16, 8, 0.35);
+    inset 0 6px 8px -3px rgba(8, 5, 2, 0.98),
+    inset 0 -4px 6px -3px rgba(6, 4, 2, 0.9),
+    inset 5px 0 7px -3px rgba(12, 8, 4, 0.95),
+    inset -5px 0 7px -3px rgba(12, 8, 4, 0.95),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.98),
+    0 0 0 1px rgba(28, 20, 10, 0.65),
+    0 1px 2px rgba(16, 10, 4, 0.45);
   overflow: hidden;
 }
 
