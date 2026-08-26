@@ -10,6 +10,7 @@ import {
   peakFrequency,
   rmsDb,
   spectralCentroid,
+  type Band,
 } from './audio/spectrum.ts'
 import { Scope } from './render/scope.ts'
 
@@ -143,6 +144,27 @@ ui.peakHold.addEventListener('click', () => {
   ui.peakHold.setAttribute('aria-pressed', hold.enabled ? 'true' : 'false')
 })
 
+const demoMode = new URLSearchParams(location.search).has('demo')
+
+function demoBands(count: number, t: number): { bands: Band[]; hold: number[] } {
+  const bands = Array.from({ length: count }, (_, i) => {
+    const t0 = i / count
+    const t1 = (i + 1) / count
+    const fLo = Math.exp(Math.log(F_MIN) + t0 * (Math.log(F_MAX) - Math.log(F_MIN)))
+    const fHi = Math.exp(Math.log(F_MIN) + t1 * (Math.log(F_MAX) - Math.log(F_MIN)))
+    const fCenter = Math.sqrt(fLo * fHi)
+    // Low-end room noise like the reference capture
+    const low = Math.exp(-Math.pow(Math.log(fCenter / 45) / 0.85, 2))
+    const mid = 0.18 * Math.exp(-Math.pow(Math.log(fCenter / 180) / 0.55, 2))
+    const hiss = 0.04 * Math.exp(-Math.pow(Math.log(fCenter / 6000) / 1.1, 2))
+    const wobble = 0.08 * Math.sin(t * 0.0017 + i * 0.35)
+    const db = -90 + (low * 22 + mid * 10 + hiss * 6 + wobble) * (0.85 + 0.15 * Math.sin(t * 0.0009 + i))
+    return { fLo, fHi, fCenter, db: Math.min(-68, db) }
+  })
+  const hold = bands.map((b, i) => b.db + 1.5 + ((i * 17) % 5) * 0.35)
+  return { bands, hold }
+}
+
 function paint(): void {
   const { plotWidth } = scope.resize()
   const count = bandCountForWidth(plotWidth)
@@ -150,21 +172,37 @@ function paint(): void {
   const rate = engine.sampleRate || 48000
   const fftSize = engine.fftSize
   const binHz = rate / fftSize
+  const now = performance.now()
 
-  const bands = live
-    ? logBands(engine.freq, rate, fftSize, count)
-    : Array.from({ length: count }, (_, i) => {
-        const t0 = i / count
-        const t1 = (i + 1) / count
-        const fLo = Math.exp(Math.log(F_MIN) + t0 * (Math.log(F_MAX) - Math.log(F_MIN)))
-        const fHi = Math.exp(Math.log(F_MIN) + t1 * (Math.log(F_MAX) - Math.log(F_MIN)))
-        return { fLo, fHi, fCenter: Math.sqrt(fLo * fHi), db: engine.dbMin }
-      })
+  let bands: Band[]
+  let caps: number[]
+  let peak = { hz: 0, db: -Infinity }
+  let centroid = 0
+  let rms = -Infinity
+  let drawLive = live
 
-  const peak = live ? peakFrequency(engine.freq, rate, fftSize) : { hz: 0, db: -Infinity }
-  const centroid = live ? spectralCentroid(engine.freq, rate, fftSize) : 0
-  const rms = live ? rmsDb(engine.time) : -Infinity
-  const caps = hold.update(bands)
+  if (live) {
+    bands = logBands(engine.freq, rate, fftSize, count)
+    peak = peakFrequency(engine.freq, rate, fftSize)
+    centroid = spectralCentroid(engine.freq, rate, fftSize)
+    rms = rmsDb(engine.time)
+    caps = hold.update(bands)
+  } else if (demoMode) {
+    const demo = demoBands(count, now)
+    bands = demo.bands
+    caps = demo.hold
+    peak = { hz: 48, db: -72 }
+    drawLive = true
+  } else {
+    bands = Array.from({ length: count }, (_, i) => {
+      const t0 = i / count
+      const t1 = (i + 1) / count
+      const fLo = Math.exp(Math.log(F_MIN) + t0 * (Math.log(F_MAX) - Math.log(F_MIN)))
+      const fHi = Math.exp(Math.log(F_MIN) + t1 * (Math.log(F_MAX) - Math.log(F_MIN)))
+      return { fLo, fHi, fCenter: Math.sqrt(fLo * fHi), db: engine.dbMin }
+    })
+    caps = hold.update(bands)
+  }
 
   scope.draw({
     bands,
@@ -174,17 +212,24 @@ function paint(): void {
     centroidHz: centroid,
     dbMin: engine.dbMin,
     dbMax: engine.dbMax,
-    live,
+    live: drawLive,
   })
 
-  ui.statusRate.textContent = live ? `${Math.round(rate)} Hz` : '— Hz'
+  ui.statusRate.textContent = live ? `${Math.round(rate)} Hz` : demoMode ? `${Math.round(rate)} Hz` : '— Hz'
   ui.statusFft.textContent = `FFT ${fftSize}`
   ui.statusDf.textContent = `Δf ${formatDeltaF(binHz)}`
 
-  const belowFloor = !live || peak.db < -72
-  ui.metricArticles.forEach((el) => el.classList.toggle('has-signal', live && !belowFloor))
+  const belowFloor = (!live && !demoMode) || peak.db < -72
+  ui.metricArticles.forEach((el) => el.classList.toggle('has-signal', (live || demoMode) && !belowFloor))
 
-  if (belowFloor) {
+  if (demoMode && !live) {
+    ui.peak.textContent = 'Below floor'
+    ui.peakDb.textContent = 'below floor'
+    ui.note.textContent = 'A4 = 440'
+    ui.cents.textContent = ''
+    ui.centroid.textContent = '—'
+    ui.rms.textContent = '—'
+  } else if (belowFloor) {
     ui.peak.textContent = live ? 'Below floor' : '—'
     ui.peakDb.textContent = live ? 'below floor' : 'awaiting'
     ui.note.textContent = 'A4 = 440'
@@ -206,5 +251,9 @@ function paint(): void {
   requestAnimationFrame(paint)
 }
 
-setLive('idle')
+setLive(demoMode ? 'mic' : 'idle')
+if (demoMode) {
+  ui.mic.classList.add('is-active')
+  ui.statusInput.textContent = LABELS.mic
+}
 requestAnimationFrame(paint)
