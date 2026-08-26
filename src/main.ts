@@ -30,10 +30,9 @@ const ui = {
   smoothingVal: document.querySelector('#smoothing-val')!,
   gain: document.querySelector<HTMLInputElement>('#gain')!,
   gainVal: document.querySelector('#gain-val')!,
-  peakHold: document.querySelector<HTMLInputElement>('#peak-hold')!,
+  peakHold: document.querySelector<HTMLButtonElement>('#peak-hold')!,
   notice: document.querySelector<HTMLParagraphElement>('#notice')!,
   live: document.querySelector('#live-state')!,
-  liveLabel: document.querySelector('#live-label')!,
   statusInput: document.querySelector('#status-input')!,
   statusRate: document.querySelector('#status-rate')!,
   statusFft: document.querySelector('#status-fft')!,
@@ -44,15 +43,23 @@ const ui = {
   cents: document.querySelector('#readout-cents')!,
   centroid: document.querySelector('#readout-centroid')!,
   rms: document.querySelector('#readout-rms')!,
+  metricArticles: document.querySelectorAll<HTMLElement>('.metric-grid article'),
 }
 
 const LABELS: Record<SourceKind, string> = {
   idle: 'Standby',
-  mic: 'Microphone',
-  tab: 'Tab audio',
-  file: 'Recording',
-  tone: 'Reference 440 Hz',
+  mic: 'Mic open — play audio nearby or into the room.',
+  tab: 'Share a tab with audio. Video is discarded.',
+  file: 'Playing recording',
+  tone: 'Reference sine · A4 / 440 Hz',
 }
+
+const SOURCE_BTNS: { kind: SourceKind; el: HTMLButtonElement }[] = [
+  { kind: 'mic', el: ui.mic },
+  { kind: 'tab', el: ui.tab },
+  { kind: 'file', el: ui.file },
+  { kind: 'tone', el: ui.tone },
+]
 
 function showNotice(message: string | null): void {
   if (!message) {
@@ -66,9 +73,11 @@ function showNotice(message: string | null): void {
 
 function setLive(kind: SourceKind): void {
   ui.live.classList.toggle('live', kind !== 'idle')
-  ui.liveLabel.textContent = LABELS[kind]
-  ui.statusInput.textContent = kind === 'idle' ? 'Input idle' : `Input ${LABELS[kind]}`
+  ui.statusInput.textContent = LABELS[kind]
   ui.stop.disabled = kind === 'idle'
+  for (const { kind: k, el } of SOURCE_BTNS) {
+    el.classList.toggle('is-active', kind === k)
+  }
   if (kind === 'idle') hold.values = []
 }
 
@@ -87,11 +96,11 @@ async function run(start: () => Promise<void>, hint?: string): Promise<void> {
 }
 
 ui.mic.addEventListener('click', () => {
-  void run(() => engine.startMic(), 'Mic open — play audio nearby or into the room.')
+  void run(() => engine.startMic())
 })
 
 ui.tab.addEventListener('click', () => {
-  void run(() => engine.startTab(), 'Share a tab with audio. Video is discarded.')
+  void run(() => engine.startTab())
 })
 
 ui.file.addEventListener('click', () => ui.fileInput.click())
@@ -103,7 +112,7 @@ ui.fileInput.addEventListener('change', () => {
 })
 
 ui.tone.addEventListener('click', () => {
-  void run(() => engine.startTone(440), 'Reference sine · A4 / 440 Hz')
+  void run(() => engine.startTone(440))
 })
 
 ui.stop.addEventListener('click', () => {
@@ -128,8 +137,10 @@ ui.gain.addEventListener('input', () => {
   engine.setGain(value)
 })
 
-ui.peakHold.addEventListener('change', () => {
-  hold.enabled = ui.peakHold.checked
+ui.peakHold.addEventListener('click', () => {
+  hold.enabled = !hold.enabled
+  ui.peakHold.classList.toggle('is-on', hold.enabled)
+  ui.peakHold.setAttribute('aria-pressed', hold.enabled ? 'true' : 'false')
 })
 
 function paint(): void {
@@ -170,11 +181,14 @@ function paint(): void {
   ui.statusFft.textContent = `FFT ${fftSize}`
   ui.statusDf.textContent = `Δf ${formatDeltaF(binHz)}`
 
-  if (!live || peak.db < -72) {
-    ui.peak.textContent = '—'
+  const belowFloor = !live || peak.db < -72
+  ui.metricArticles.forEach((el) => el.classList.toggle('has-signal', live && !belowFloor))
+
+  if (belowFloor) {
+    ui.peak.textContent = live ? 'Below floor' : '—'
     ui.peakDb.textContent = live ? 'below floor' : 'awaiting'
     ui.note.textContent = '—'
-    ui.cents.textContent = 'A4=440'
+    ui.cents.textContent = 'A4 = 440'
     ui.centroid.textContent = '—'
     ui.rms.textContent = '—'
   } else {

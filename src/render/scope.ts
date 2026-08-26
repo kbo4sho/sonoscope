@@ -1,11 +1,12 @@
 import { DB_MAX, DB_MIN, F_MAX, F_MIN, type Band } from '../audio/spectrum.ts'
 
-const PAPER = '#eee8da'
-const INK = '#11110f'
-const MUTED = '#68645b'
-const SOFT = '#bdb5a7'
-const ORANGE = '#f05223'
-const WHITE = '#f8f4e9'
+const DISPLAY = '#161614'
+const GRID = 'rgba(200, 196, 180, 0.12)'
+const GRID_MAJOR = 'rgba(200, 196, 180, 0.22)'
+const LABEL = '#9a9688'
+const BAR = '#c9b896'
+const ORANGE = '#ff9a14'
+const WHITE = '#eceae2'
 
 const TICKS = [20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 20000]
 
@@ -81,26 +82,25 @@ export class Scope {
     const dbMax = opts.dbMax ?? DB_MAX
 
     ctx.clearRect(0, 0, w, h)
-    ctx.fillStyle = WHITE
+    ctx.fillStyle = DISPLAY
     ctx.fillRect(0, 0, w, h)
 
     this.grid(left, top, plotW, plotH, dbMin, dbMax)
-    this.bars(opts.bands, opts.hold, opts.peakHz, left, top, plotW, plotH, dbMin, dbMax)
+    this.bars(opts.bands, opts.hold, left, top, plotW, plotH, dbMin, dbMax)
 
     if (opts.live && opts.peakDb > -70) {
-      this.marker(opts.peakHz, left, top, plotW, plotH, ORANGE)
+      this.marker(opts.peakHz, left, top, plotW, plotH, WHITE, false)
     }
     if (opts.live && opts.centroidHz > F_MIN) {
-      this.marker(opts.centroidHz, left, top, plotW, plotH, MUTED, true)
+      this.marker(opts.centroidHz, left, top, plotW, plotH, WHITE, true)
     }
 
-    ctx.strokeStyle = INK
-    ctx.lineWidth = 2
+    ctx.strokeStyle = 'rgba(236, 234, 226, 0.35)'
+    ctx.lineWidth = 1
     ctx.strokeRect(left + 0.5, top + 0.5, plotW, plotH)
 
     this.dbLabels(left, top, plotH, dbMin, dbMax)
     this.hzScale(left, top + plotH, plotW)
-    this.peakPointer(opts.peakHz, opts.live && opts.peakDb > -70, left, top + plotH, plotW)
   }
 
   private grid(x: number, y: number, w: number, h: number, dbMin: number, dbMax: number): void {
@@ -110,13 +110,13 @@ export class Scope {
     ctx.rect(x, y, w, h)
     ctx.clip()
 
-    ctx.fillStyle = PAPER
+    ctx.fillStyle = DISPLAY
     ctx.fillRect(x, y, w, h)
 
-    ctx.strokeStyle = 'rgba(17, 17, 15, 0.08)'
     ctx.lineWidth = 1
     for (let db = 0; db >= dbMin; db -= 10) {
       const gy = Math.round(dbY(db, y, h, dbMin, dbMax)) + 0.5
+      ctx.strokeStyle = GRID
       ctx.beginPath()
       ctx.moveTo(x, gy)
       ctx.lineTo(x + w, gy)
@@ -127,7 +127,7 @@ export class Scope {
       if (hz < F_MIN || hz > F_MAX) continue
       const gx = Math.round(freqX(hz, x, w)) + 0.5
       const major = /^[125]0*$/.test(String(hz))
-      ctx.strokeStyle = major ? 'rgba(17, 17, 15, 0.14)' : 'rgba(17, 17, 15, 0.06)'
+      ctx.strokeStyle = major ? GRID_MAJOR : GRID
       ctx.beginPath()
       ctx.moveTo(gx, y)
       ctx.lineTo(gx, y + h)
@@ -139,7 +139,6 @@ export class Scope {
   private bars(
     bands: Band[],
     hold: number[],
-    peakHz: number,
     x: number,
     y: number,
     w: number,
@@ -163,9 +162,8 @@ export class Scope {
       const barW = Math.max(1, bw - gap)
       const by = dbY(band.db, y, h, dbMin, dbMax)
       const barH = y + h - by
-      const isPeak = peakHz >= band.fLo && peakHz < band.fHi
-      ctx.fillStyle = isPeak ? ORANGE : INK
-      ctx.globalAlpha = isPeak ? 0.92 : 0.78
+      ctx.fillStyle = BAR
+      ctx.globalAlpha = 0.92
       if (barH > 0) ctx.fillRect(bx, by, barW, barH)
 
       const holdDb = hold[i]
@@ -186,8 +184,8 @@ export class Scope {
     ctx.save()
     ctx.strokeStyle = color
     ctx.lineWidth = 1
-    ctx.globalAlpha = dashed ? 0.45 : 0.85
-    if (dashed) ctx.setLineDash([2, 4])
+    ctx.globalAlpha = dashed ? 0.4 : 0.75
+    if (dashed) ctx.setLineDash([3, 4])
     ctx.beginPath()
     ctx.moveTo(gx, y)
     ctx.lineTo(gx, y + h)
@@ -195,23 +193,10 @@ export class Scope {
     ctx.restore()
   }
 
-  private peakPointer(hz: number, show: boolean, x: number, y: number, w: number): void {
-    if (!show) return
-    const { ctx } = this
-    const gx = freqX(hz, x, w)
-    ctx.fillStyle = ORANGE
-    ctx.beginPath()
-    ctx.moveTo(gx, y + 1)
-    ctx.lineTo(gx - 5, y + 9)
-    ctx.lineTo(gx + 5, y + 9)
-    ctx.closePath()
-    ctx.fill()
-  }
-
   private dbLabels(left: number, top: number, h: number, dbMin: number, dbMax: number): void {
     const { ctx } = this
-    ctx.fillStyle = MUTED
-    ctx.font = '500 9px "Geist Mono", ui-monospace, monospace'
+    ctx.fillStyle = LABEL
+    ctx.font = '500 9px "IBM Plex Mono", ui-monospace, monospace'
     ctx.textAlign = 'right'
     ctx.textBaseline = 'middle'
     for (let db = 0; db >= dbMin; db -= 10) {
@@ -222,17 +207,16 @@ export class Scope {
     ctx.translate(12, top + h / 2)
     ctx.rotate(-Math.PI / 2)
     ctx.textAlign = 'center'
-    ctx.fillStyle = MUTED
+    ctx.fillStyle = LABEL
     ctx.fillText('dBFS', 0, 0)
     ctx.restore()
   }
 
   private hzScale(x: number, y: number, w: number): void {
     const { ctx } = this
-    ctx.strokeStyle = INK
     ctx.lineWidth = 1
-    ctx.fillStyle = MUTED
-    ctx.font = '500 9px "Geist Mono", ui-monospace, monospace'
+    ctx.fillStyle = LABEL
+    ctx.font = '500 9px "IBM Plex Mono", ui-monospace, monospace'
     ctx.textAlign = 'center'
     ctx.textBaseline = 'top'
 
@@ -243,10 +227,10 @@ export class Scope {
       ctx.beginPath()
       ctx.moveTo(gx, y)
       ctx.lineTo(gx, y + (major ? 8 : 4))
-      ctx.strokeStyle = major ? INK : SOFT
+      ctx.strokeStyle = major ? 'rgba(236, 234, 226, 0.45)' : 'rgba(236, 234, 226, 0.2)'
       ctx.stroke()
       if (major) {
-        ctx.fillStyle = INK
+        ctx.fillStyle = LABEL
         ctx.fillText(labelHz(hz), gx, y + 11)
       }
     }
