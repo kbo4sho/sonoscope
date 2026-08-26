@@ -22,6 +22,11 @@
 
 ## Status
 
-Round 0 — diagnosis complete. Cause: `.rack-btn.is-active .rb-housing { height: 28px; margin-top: -7px }` plus hidden `.led-dot` and chamber `::before` lamp.
+| Round | Result | Gap |
+|---|---|---|
+| 0 | diagnosis | tall rocker via height:28px + hidden LED |
+| 1 | **won** (critic: right=ours) | jewel not bright/amber enough |
+| 2 | building | brighter amber jewel |
 
-Next: implement fixed-height + lit LED; capture A/B; blind critic.
+Pixel check r1: Listen housing ~14px same as siblings (active & idle).
+Artifacts: `/opt/cursor/artifacts/listen-*-r1.png`, pairs in `gauntlet/listen-btn/`.
