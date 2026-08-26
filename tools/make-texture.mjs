@@ -137,21 +137,22 @@ function fbm(baseW, baseH, octaves, gain = 0.5) {
     }
   }
 
-  // the bulk of the finish: short, shallow, densely packed
-  for (let k = 0; k < 58000; k++) {
+  // Dense near-horizontal belt scratches — keep slope tiny so the grain reads
+  // as directional brushing, not mottled noise.
+  for (let k = 0; k < 90000; k++) {
     const x0 = rnd() * W
     const y0 = rnd() * H
     const p = 0.55 + pressure(x0 / W, y0 / H) * 0.7
-    const len = 10 + rnd() * rnd() * 170
-    stroke(x0, y0, len, (rnd() - 0.5) * 0.05, (rnd() - 0.48) * 15 * p, 0.34 + rnd() * 0.34)
+    const len = 18 + rnd() * rnd() * 220
+    stroke(x0, y0, len, (rnd() - 0.5) * 0.028, (rnd() - 0.48) * 18 * p, 0.28 + rnd() * 0.28)
   }
 
-  // a sparser pass of longer, deeper scoring that ties the grain together
-  for (let k = 0; k < 1500; k++) {
+  // Longer, deeper scores that lock the horizontal direction
+  for (let k = 0; k < 2800; k++) {
     const x0 = rnd() * W
     const y0 = rnd() * H
-    const len = 70 + rnd() * 380
-    stroke(x0, y0, len, (rnd() - 0.5) * 0.08, (rnd() - 0.46) * 13, 0.38 + rnd() * 0.6)
+    const len = 120 + rnd() * 520
+    stroke(x0, y0, len, (rnd() - 0.5) * 0.04, (rnd() - 0.46) * 16, 0.32 + rnd() * 0.45)
   }
 
   /** Arc of an orbital scratch, wrapping in both axes. */
@@ -174,20 +175,20 @@ function fbm(baseW, baseH, octaves, gain = 0.5) {
     }
   }
 
-  // orbital sanding leaves faint chevrons and loops crossing the linear grain
-  for (let k = 0; k < 17000; k++) {
+  // Sparse orbital marks only — too many read as cloudy mottling instead of brush
+  for (let k = 0; k < 3500; k++) {
     const cx = rnd() * W
     const cy = rnd() * H
-    const r = 4 + rnd() * rnd() * 46
-    arc(cx, cy, r, rnd() * TAU, (rnd() < 0.5 ? -1 : 1) * (0.5 + rnd() * 1.9), (rnd() - 0.5) * 11, 0.34 + rnd() * 0.32)
+    const r = 3 + rnd() * rnd() * 28
+    arc(cx, cy, r, rnd() * TAU, (rnd() < 0.5 ? -1 : 1) * (0.4 + rnd() * 1.2), (rnd() - 0.5) * 6, 0.3 + rnd() * 0.28)
   }
 
   // a handful of stray gouges from handling rather than manufacture
-  for (let k = 0; k < 13; k++) {
+  for (let k = 0; k < 8; k++) {
     const x0 = rnd() * W
     const y0 = rnd() * H
     const len = 50 + rnd() * 330
-    stroke(x0, y0, len, (rnd() - 0.5) * 0.6, (rnd() < 0.5 ? 1 : -1) * (5 + rnd() * 8), 0.45 + rnd() * 0.5)
+    stroke(x0, y0, len, (rnd() - 0.5) * 0.35, (rnd() < 0.5 ? 1 : -1) * (4 + rnd() * 7), 0.4 + rnd() * 0.45)
   }
 
   // pitting and grit specks clumped by the grime field rather than spread evenly
@@ -213,8 +214,9 @@ function fbm(baseW, baseH, octaves, gain = 0.5) {
   const mean = sum / out.length
   let varr = 0
   for (const v of out) varr += (v - mean) ** 2
-  const scale = 12 / Math.sqrt(varr / out.length)
-  for (let i = 0; i < out.length; i++) out[i] = 128 + (out[i] - mean) * scale + (rnd() - 0.5) * 7
+  // Higher contrast so directional grain survives soft-light / overlay stacking
+  const scale = 18 / Math.sqrt(varr / out.length)
+  for (let i = 0; i < out.length; i++) out[i] = 128 + (out[i] - mean) * scale + (rnd() - 0.5) * 4
 
   writeGray('public/brushed-metal.png', W, H, out)
 }
