@@ -2,11 +2,11 @@
 
 Live: [kbo4sho.github.io/sonoscope](https://kbo4sho.github.io/sonoscope/)
 
-A quiet frequency analyser. Vertical bars show **how loud each band is** (dBFS). Their position on the dial is **logarithmic frequency**, the same spacing ears and old radio scales use — not a party equalizer.
+A quiet frequency analyser dressed as rack-mounted gear. Vertical bars show **how loud each band is** (dBFS). Their position on the dial is **logarithmic frequency**, the same spacing ears and old radio scales use — not a party equalizer.
 
 ## Why this, not a typical visualizer
 
-Most visualizers optimize for glow. This one is for looking: peak frequency, nearest note, spectral centroid, and RMS, with a paper/ink face borrowed from the KBO Software Factory and analog radio chrome.
+Most visualizers optimize for glow. This one is for looking: peak frequency, nearest note, spectral centroid, and RMS, on a brushed-metal face with an inset spectrum well.
 
 Spotify’s API does not give a live spectrum (playback is DRM-protected). Use one of:
 

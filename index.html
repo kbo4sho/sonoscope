@@ -4,108 +4,174 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1b140e" />
     <title>Sonoscope — frequency analyser</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&family=Geist+Mono:wght@400;500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
   </head>
   <body>
     <a class="skip-link" href="#scope">Skip to analyser</a>
 
-    <header class="masthead">
-      <div class="brand">
-        <span class="brand-mark" aria-hidden="true">S</span>
-        <span>
-          <strong>Sonoscope</strong>
-          <small>Spectrum</small>
-        </span>
-      </div>
-      <div class="masthead-controls" role="toolbar" aria-label="Input">
-        <span class="environment" id="live-state">
-          <i id="live-led"></i>
-          <span id="live-label">Standby</span>
-        </span>
-        <button class="button button-dark" id="btn-mic" type="button">Listen</button>
-        <button class="button button-outline" id="btn-tab" type="button">Tab</button>
-        <button class="button button-outline" id="btn-file" type="button">File</button>
-        <button class="button button-signal" id="btn-tone" type="button">440</button>
-        <button class="button button-outline" id="btn-stop" type="button" disabled>Stop</button>
-        <input id="file-input" type="file" accept="audio/*" hidden />
-      </div>
-    </header>
+    <svg class="svg-defs" aria-hidden="true" focusable="false">
+      <filter id="fleck" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" seed="3" stitchTiles="stitch" />
+        <feColorMatrix type="matrix" values="1 0 0 0 0  1 0 0 0 0  1 0 0 0 0  0 0 0 0 0.15" />
+      </filter>
+      <!-- Blotchy tarnish at a scale the tiled wear map cannot reach: the turbulence
+           is stretched sideways and then displaced so the patches drift rather than
+           settling into an even field. -->
+      <filter id="patina" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.0022 0.011" numOctaves="5" seed="11" stitchTiles="stitch" result="cloud" />
+        <feTurbulence type="fractalNoise" baseFrequency="0.006" numOctaves="2" seed="27" result="warp" />
+        <feDisplacementMap in="cloud" in2="warp" scale="34" xChannelSelector="R" yChannelSelector="G" />
+        <feColorMatrix type="matrix" values="1 0 0 0 0  1 0 0 0 0  1 0 0 0 0  0 0 0 0 0.58" />
+      </filter>
+      <!-- Directional scuffing: streaks pulled along the brush axis, clustered so
+           some stretches of panel are polished and others dulled. -->
+      <filter id="scuff" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.02 0.34" numOctaves="4" seed="41" stitchTiles="stitch" />
+        <feColorMatrix type="matrix" values="1 0 0 0 0  1 0 0 0 0  1 0 0 0 0  0 0 0 0 0.22" />
+      </filter>
+    </svg>
 
-    <div class="status-strip" aria-live="polite">
-      <span id="status-input">Input idle</span>
-      <span id="status-rate">— Hz</span>
-      <span id="status-fft">FFT —</span>
-      <span id="status-df">Δf —</span>
+    <div class="cabinet">
+      <div class="chassis">
+        <i class="wear-scuff" aria-hidden="true"></i>
+        <div class="faceplate">
+          <header class="masthead">
+            <div class="brand-block">
+              <h1 class="brand">Sonoscope</h1>
+              <div class="mic-row" id="live-state">
+                <i class="lamp lamp-sq" id="live-led" aria-hidden="true"></i>
+                <span class="mic-label">Microphone</span>
+              </div>
+            </div>
+
+            <div class="transport" role="toolbar" aria-label="Input">
+              <button class="rack-btn" id="btn-mic" type="button">
+                <span class="rb-name">Listen</span>
+                <i class="led led-dot" aria-hidden="true"></i>
+                <span class="rb-housing"><span class="rb-well"><span class="rb-cap"></span></span></span>
+              </button>
+              <button class="rack-btn rack-btn-tab" id="btn-tab" type="button" title="Capture tab audio">
+                <span class="rb-name">Tab</span>
+                <i class="led led-dot" aria-hidden="true"></i>
+                <span class="rb-housing"><span class="rb-well"><span class="rb-cap"></span></span></span>
+              </button>
+              <button class="rack-btn" id="btn-file" type="button">
+                <span class="rb-name">File</span>
+                <i class="led led-dot" aria-hidden="true"></i>
+                <span class="rb-housing"><span class="rb-well"><span class="rb-cap"></span></span></span>
+              </button>
+              <button class="rack-btn" id="btn-tone" type="button">
+                <span class="rb-name">440</span>
+                <i class="led led-dot" aria-hidden="true"></i>
+                <span class="rb-housing"><span class="rb-well"><span class="rb-cap"></span></span></span>
+              </button>
+              <button class="rack-btn" id="btn-stop" type="button" disabled>
+                <span class="rb-name">Stop</span>
+                <i class="led led-dot" aria-hidden="true"></i>
+                <span class="rb-housing"><span class="rb-well"><span class="rb-cap"></span></span></span>
+              </button>
+              <input id="file-input" type="file" accept="audio/*" hidden />
+            </div>
+          </header>
+
+          <div class="status-bay" aria-live="polite">
+            <span class="bay-glass">
+              <span id="status-input">Standby</span>
+              <span class="status-meta">
+                <span id="status-rate">— Hz</span>
+                <span id="status-fft">FFT —</span>
+                <span id="status-df">Δf —</span>
+              </span>
+            </span>
+          </div>
+
+          <p class="honesty" id="notice" hidden></p>
+        </div>
+
+        <main class="console">
+          <section class="instrument" id="scope">
+            <div class="scope-bezel">
+              <div class="scope-well">
+                <div class="scope-chrome">
+                  <span class="scope-title">Spectrum</span>
+                  <span class="scope-meta">20 Hz–20 kHz · Log · dBFS</span>
+                </div>
+                <canvas id="canvas" width="1200" height="520" aria-label="Frequency spectrum"></canvas>
+              </div>
+            </div>
+          </section>
+
+          <section class="lower-deck" aria-label="Readouts and measurement">
+            <div class="metric-grid">
+              <article>
+                <span class="m-label">Peak</span>
+                <span class="m-read">
+                  <i class="lamp lamp-rd" aria-hidden="true"></i>
+                  <strong id="readout-peak">—</strong>
+                </span>
+                <small id="readout-peak-db" class="sr-only">awaiting</small>
+              </article>
+              <article>
+                <span class="m-label">Note</span>
+                <span class="m-read">
+                  <i class="lamp lamp-rd" aria-hidden="true"></i>
+                  <strong id="readout-note">—</strong>
+                </span>
+                <small id="readout-cents" class="sr-only">A4 = 440</small>
+              </article>
+              <article>
+                <span class="m-label">Centroid</span>
+                <span class="m-read">
+                  <i class="lamp lamp-rd" aria-hidden="true"></i>
+                  <strong id="readout-centroid">—</strong>
+                </span>
+              </article>
+              <article>
+                <span class="m-label">RMS</span>
+                <span class="m-read">
+                  <i class="lamp lamp-rd" aria-hidden="true"></i>
+                  <strong id="readout-rms">—</strong>
+                </span>
+              </article>
+            </div>
+
+            <div class="controls-panel">
+              <label class="ctrl ctrl-fft">
+                <span class="c-head"><span class="c-name">FFT</span></span>
+                <span class="fft-window">
+                  <select id="fft-size">
+                    <option value="2048">2048</option>
+                    <option value="4096" selected>4096</option>
+                    <option value="8192">8192</option>
+                    <option value="16384">16384</option>
+                  </select>
+                  <i class="chev" aria-hidden="true"></i>
+                </span>
+              </label>
+              <label class="ctrl ctrl-slider">
+                <span class="c-head"><span class="c-name">Smooth</span><em id="smoothing-val">0.72</em></span>
+                <input id="smoothing" type="range" min="0" max="0.95" step="0.01" value="0.72" />
+              </label>
+              <label class="ctrl ctrl-slider">
+                <span class="c-head"><span class="c-name">Gain</span><em id="gain-val">1.00</em></span>
+                <input id="gain" type="range" min="0" max="1" step="0.005" value="0.4" />
+              </label>
+              <button class="hold-btn is-on" id="peak-hold" type="button" aria-pressed="true">
+                <i class="lamp lamp-sq" aria-hidden="true"></i>
+                <span>Hold</span>
+              </button>
+            </div>
+          </section>
+        </main>
+      </div>
     </div>
-
-    <p class="honesty" id="notice" hidden></p>
-
-    <main class="console">
-      <section class="instrument" id="scope">
-        <div class="scope-chrome">
-          <span class="scope-title">Spectrum</span>
-          <span class="scope-meta">20 Hz–20 kHz · log · dBFS</span>
-        </div>
-        <div class="scope-frame">
-          <canvas id="canvas" width="1200" height="520" aria-label="Frequency spectrum"></canvas>
-        </div>
-      </section>
-
-      <section class="metric-grid" aria-label="Readouts">
-        <article>
-          <span>Peak</span>
-          <strong id="readout-peak">—</strong>
-          <small id="readout-peak-db">awaiting</small>
-        </article>
-        <article>
-          <span>Note</span>
-          <strong id="readout-note">—</strong>
-          <small id="readout-cents">A4=440</small>
-        </article>
-        <article>
-          <span>Centroid</span>
-          <strong id="readout-centroid">—</strong>
-          <small>brightness</small>
-        </article>
-        <article>
-          <span>RMS</span>
-          <strong id="readout-rms">—</strong>
-          <small>level</small>
-        </article>
-      </section>
-
-      <section class="controls-panel" aria-label="Measurement">
-        <div class="controls">
-          <label>
-            <span>FFT</span>
-            <select id="fft-size">
-              <option value="2048">2048</option>
-              <option value="4096" selected>4096</option>
-              <option value="8192">8192</option>
-              <option value="16384">16384</option>
-            </select>
-          </label>
-          <label>
-            <span>Smooth <em id="smoothing-val">0.72</em></span>
-            <input id="smoothing" type="range" min="0" max="0.95" step="0.01" value="0.72" />
-          </label>
-          <label>
-            <span>Gain <em id="gain-val">1.00</em></span>
-            <input id="gain" type="range" min="0.25" max="8" step="0.05" value="1" />
-          </label>
-          <label class="check">
-            <input id="peak-hold" type="checkbox" checked />
-            <span>Hold</span>
-          </label>
-        </div>
-      </section>
-    </main>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
