@@ -132,8 +132,16 @@ ui.smoothing.addEventListener('input', () => {
   engine.setSmoothing(value)
 })
 
+// The travel is logarithmic so unity gain lands where a real trim pot would sit.
+const GAIN_MIN = 0.25
+const GAIN_MAX = 8
+
+function gainFromSlider(t: number): number {
+  return GAIN_MIN * Math.pow(GAIN_MAX / GAIN_MIN, t)
+}
+
 ui.gain.addEventListener('input', () => {
-  const value = Number(ui.gain.value)
+  const value = gainFromSlider(Number(ui.gain.value))
   ui.gainVal.textContent = value.toFixed(2)
   engine.setGain(value)
 })
@@ -195,6 +203,7 @@ function paint(): void {
     bands = demo.bands
     caps = demo.hold
     peak = { hz: 48, db: -72 }
+    centroid = 4800
     drawLive = true
   } else {
     bands = Array.from({ length: count }, (_, i) => {

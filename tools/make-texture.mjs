@@ -97,7 +97,7 @@ const TAU = Math.PI * 2
     let mod = 0
     for (const h of along) mod += h.a * Math.sin((TAU * h.f * y) / H + h.p + colPhase[x] * 0.9)
     const grain = (rnd() - 0.5) * 4
-    return 128 + col[x] * (1.05 + 0.45 * mod) + colPhase[x] * 3 + grain
+    return 128 + col[x] * (1.05 + 0.45 * mod) + colPhase[x] * 1.2 + grain
   })
 }
 

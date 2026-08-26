@@ -17,13 +17,13 @@
     <a class="skip-link" href="#scope">Skip to analyser</a>
 
     <svg class="svg-defs" aria-hidden="true" focusable="false">
-      <filter id="fleck" x="0" y="0" width="100%" height="100%">
-        <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch" result="n" />
-        <feColorMatrix type="matrix" values="0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0.07 0" />
+      <filter id="fleck" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" seed="3" stitchTiles="stitch" />
+        <feColorMatrix type="matrix" values="1 0 0 0 0  1 0 0 0 0  1 0 0 0 0  0 0 0 0 0.12" />
       </filter>
-      <filter id="screen-grain" x="0" y="0" width="100%" height="100%">
-        <feTurbulence type="fractalNoise" baseFrequency="0.55" numOctaves="2" stitchTiles="stitch" />
-        <feColorMatrix type="matrix" values="0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0.05 0" />
+      <filter id="patina" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.004 0.016" numOctaves="4" seed="11" stitchTiles="stitch" />
+        <feColorMatrix type="matrix" values="1 0 0 0 0  1 0 0 0 0  1 0 0 0 0  0 0 0 0 0.3" />
       </filter>
     </svg>
 
@@ -149,7 +149,7 @@
               </label>
               <label class="ctrl ctrl-slider">
                 <span class="c-head"><span class="c-name">Gain</span><em id="gain-val">1.00</em></span>
-                <input id="gain" type="range" min="0.25" max="8" step="0.05" value="1" />
+                <input id="gain" type="range" min="0" max="1" step="0.005" value="0.4" />
               </label>
               <button class="hold-btn is-on" id="peak-hold" type="button" aria-pressed="true">
                 <i class="lamp lamp-sq" aria-hidden="true"></i>

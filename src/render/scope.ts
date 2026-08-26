@@ -1,16 +1,16 @@
 import { DB_MAX, DB_MIN, F_MAX, F_MIN, type Band } from '../audio/spectrum.ts'
 
-const SCREEN = '#212120'
-const SCREEN_LIT = '#2b2b29'
-const PLOT_TOP = '#292926'
-const PLOT_BOTTOM = '#222220'
-const GRID = 'rgba(214, 211, 200, 0.12)'
-const GRID_MAJOR = 'rgba(214, 211, 200, 0.22)'
+const SCREEN = '#191918'
+const SCREEN_LIT = '#1f1f1e'
+const PLOT_TOP = '#33332f'
+const PLOT_BOTTOM = '#2a2a27'
+const GRID = 'rgba(214, 211, 200, 0.14)'
+const GRID_MAJOR = 'rgba(214, 211, 200, 0.23)'
 const AXIS = 'rgba(220, 216, 202, 0.4)'
 const LABEL = 'rgba(208, 203, 188, 0.88)'
 const LABEL_DIM = 'rgba(208, 203, 188, 0.6)'
-const BAR_TOP = '#d9d4c3'
-const BAR_BOTTOM = '#bab4a1'
+const BAR_TOP = '#d6cfba'
+const BAR_BOTTOM = '#b6af9b'
 const ORANGE = '#ff9a14'
 const WHITE = 'rgba(238, 233, 218, 0.8)'
 
@@ -36,6 +36,26 @@ function labelHz(hz: number): string {
   return String(hz)
 }
 
+/** Static tube grain, built once and tiled. */
+function grainTile(ctx: CanvasRenderingContext2D): CanvasPattern | null {
+  const size = 96
+  const tile = document.createElement('canvas')
+  tile.width = size
+  tile.height = size
+  const tctx = tile.getContext('2d')
+  if (!tctx) return null
+  const img = tctx.createImageData(size, size)
+  for (let i = 0; i < img.data.length; i += 4) {
+    const v = 120 + Math.random() * 70
+    img.data[i] = v
+    img.data[i + 1] = v
+    img.data[i + 2] = v
+    img.data[i + 3] = 255
+  }
+  tctx.putImageData(img, 0, 0)
+  return ctx.createPattern(tile, 'repeat')
+}
+
 export class Scope {
   private canvas: HTMLCanvasElement
   private ctx: CanvasRenderingContext2D
@@ -44,12 +64,14 @@ export class Scope {
   private dpr = 0
   private glass: CanvasGradient | null = null
   private plot: CanvasGradient | null = null
+  private grain: CanvasPattern | null = null
 
   constructor(canvas: HTMLCanvasElement) {
     const ctx = canvas.getContext('2d')
     if (!ctx) throw new Error('Canvas unsupported')
     this.canvas = canvas
     this.ctx = ctx
+    this.grain = grainTile(ctx)
   }
 
   resize(): { plotWidth: number } {
@@ -114,13 +136,20 @@ export class Scope {
     if (!this.glass) {
       const g = ctx.createRadialGradient(w * 0.5, h * 0.42, 0, w * 0.5, h * 0.42, Math.max(w, h) * 0.72)
       g.addColorStop(0, SCREEN_LIT)
-      g.addColorStop(0.6, '#222220')
+      g.addColorStop(0.6, '#1c1c1b')
       g.addColorStop(1, SCREEN)
       this.glass = g
     }
     ctx.clearRect(0, 0, w, h)
     ctx.fillStyle = this.glass
     ctx.fillRect(0, 0, w, h)
+    if (this.grain) {
+      ctx.save()
+      ctx.globalAlpha = 0.05
+      ctx.fillStyle = this.grain
+      ctx.fillRect(0, 0, w, h)
+      ctx.restore()
+    }
   }
 
   private vignette(w: number, h: number): void {
@@ -139,14 +168,19 @@ export class Scope {
     ctx.rect(x, y, w, h)
     ctx.clip()
 
+    // Lift the plot rectangle a shade above the surrounding margin without
+    // flattening the tube's centre glow.
     if (!this.plot) {
       const p = ctx.createLinearGradient(0, y, 0, y + h)
       p.addColorStop(0, PLOT_TOP)
       p.addColorStop(1, PLOT_BOTTOM)
       this.plot = p
     }
+    ctx.save()
+    ctx.globalAlpha = 0.22
     ctx.fillStyle = this.plot
     ctx.fillRect(x, y, w, h)
+    ctx.restore()
     ctx.lineWidth = 1
 
     for (let db = 0; db >= dbMin; db -= 10) {
@@ -223,9 +257,9 @@ export class Scope {
 
       const holdDb = hold[i]
       if (Number.isFinite(holdDb) && holdDb > dbMin + 1) {
-        const hy = Math.round(dbY(holdDb, y, h, dbMin, dbMax)) - 3
+        const hy = Math.round(dbY(holdDb, y, h, dbMin, dbMax)) - 2
         ctx.fillStyle = ORANGE
-        ctx.fillRect(bx, hy, barW, 3)
+        ctx.fillRect(bx, hy, barW, 2)
       }
     }
     ctx.restore()
