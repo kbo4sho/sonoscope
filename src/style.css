@@ -101,15 +101,9 @@ select {
 .cabinet {
   min-height: 100dvh;
   max-height: 100dvh;
-  padding: 15px 0 calc(16px + var(--safe-bottom));
+  padding: 0;
   display: flex;
-  background-color: #4a2c18;
-  background-image:
-    linear-gradient(180deg, rgba(0, 0, 0, 0.34) 0%, rgba(255, 228, 190, 0.08) 42%, rgba(0, 0, 0, 0.3) 100%),
-    linear-gradient(90deg, #3a2211 0%, #57361d 26%, #5e3a21 54%, #472b1a 84%, #321e11 100%),
-    var(--wood);
-  background-size: auto, auto, 140px 280px;
-  background-blend-mode: overlay, normal, soft-light;
+  background: #12100c;
 }
 
 /* ——————————————————————— chassis ——————————————————————— */
@@ -139,7 +133,7 @@ select {
       #bab0a7 80%,
       #958c86 100%
     );
-  background-size: auto, auto, auto, auto, auto, 320px 320px, auto;
+  background-size: auto, auto, auto, auto, auto, 180px 180px, auto;
   background-blend-mode: normal, normal, normal, normal, normal, soft-light, normal;
   overflow: hidden;
   box-shadow:
