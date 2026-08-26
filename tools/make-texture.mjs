@@ -215,8 +215,8 @@ function fbm(baseW, baseH, octaves, gain = 0.5) {
   let varr = 0
   for (const v of out) varr += (v - mean) ** 2
   // Keep low amplitude so soft-light stays fine, not striped
-  const scale = 9 / Math.sqrt(varr / out.length)
-  for (let i = 0; i < out.length; i++) out[i] = 128 + (out[i] - mean) * scale + (rnd() - 0.5) * 2
+  const scale = 7 / Math.sqrt(varr / out.length)
+  for (let i = 0; i < out.length; i++) out[i] = 128 + (out[i] - mean) * scale + (rnd() - 0.5) * 1.5
 
   writeGray('public/brushed-metal.png', W, H, out)
 }
