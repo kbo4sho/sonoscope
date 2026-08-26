@@ -155,8 +155,8 @@ select {
     auto, auto, auto, auto,
     auto, auto, auto, auto, auto, auto, auto, auto,
     auto,
-    1200px 1800px,
-    220px 220px,
+    1600px 2200px,
+    480px 480px,
     auto;
   background-position:
     0 0, 0 0, 0 0, 0 0,
@@ -304,16 +304,20 @@ select {
 /* ——————————————————————— transport switches ——————————————————————— */
 
 .transport {
-  flex: 0 0 auto;
+  flex: 0 1 auto;
   display: flex;
   align-items: flex-end;
-  gap: 10px;
+  justify-content: flex-end;
+  gap: 6px;
+  min-width: 0;
+  max-width: 58%;
 }
 
 .rack-btn {
   position: relative;
-  flex: 0 0 48px;
-  min-width: 0;
+  flex: 1 1 0;
+  min-width: 36px;
+  max-width: 52px;
   padding: 0;
   border: 0;
   background: none;

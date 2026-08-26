@@ -214,9 +214,9 @@ function fbm(baseW, baseH, octaves, gain = 0.5) {
   const mean = sum / out.length
   let varr = 0
   for (const v of out) varr += (v - mean) ** 2
-  // Subtle amplitude — reference metal is satin, not scored
-  const scale = 4.5 / Math.sqrt(varr / out.length)
-  for (let i = 0; i < out.length; i++) out[i] = 128 + (out[i] - mean) * scale + (rnd() - 0.5) * 1
+  // Very subtle satin grain — reference metal is quiet, not scored
+  const scale = 2.8 / Math.sqrt(varr / out.length)
+  for (let i = 0; i < out.length; i++) out[i] = 128 + (out[i] - mean) * scale + (rnd() - 0.5) * 0.6
 
   writeGray('public/brushed-metal.png', W, H, out)
 }
