@@ -15,51 +15,60 @@
   <body>
     <a class="skip-link" href="#scope">Skip to analyser</a>
 
+    <svg class="svg-defs" aria-hidden="true" focusable="false">
+      <filter id="metal-noise" x="0" y="0" width="100%" height="100%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch" result="noise" />
+        <feColorMatrix type="matrix" values="0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0.08 0" />
+      </filter>
+    </svg>
+
     <div class="chassis">
-      <header class="masthead">
-        <div class="brand-block">
-          <h1 class="brand">Sonoscope</h1>
-          <div class="mic-row" id="live-state">
-            <span class="mic-label">Microphone</span>
-            <i class="led led-square" id="live-led" aria-hidden="true"></i>
+      <div class="faceplate">
+        <header class="masthead">
+          <div class="brand-block">
+            <h1 class="brand">Sonoscope</h1>
+            <div class="mic-row" id="live-state">
+              <span class="mic-label">Microphone</span>
+              <i class="led led-square" id="live-led" aria-hidden="true"></i>
+            </div>
           </div>
+
+          <div class="transport" role="toolbar" aria-label="Input">
+            <button class="rack-btn" id="btn-mic" type="button">
+              <i class="led led-bar" aria-hidden="true"></i>
+              <span>Listen</span>
+            </button>
+            <button class="rack-btn rack-btn-tab" id="btn-tab" type="button" title="Capture tab audio">
+              <i class="led led-dot" aria-hidden="true"></i>
+              <span>Tab</span>
+            </button>
+            <button class="rack-btn" id="btn-file" type="button">
+              <i class="led led-dot" aria-hidden="true"></i>
+              <span>File</span>
+            </button>
+            <button class="rack-btn" id="btn-tone" type="button">
+              <i class="led led-dot" aria-hidden="true"></i>
+              <span>440</span>
+            </button>
+            <button class="rack-btn" id="btn-stop" type="button" disabled>
+              <i class="led led-dot" aria-hidden="true"></i>
+              <span>Stop</span>
+            </button>
+            <input id="file-input" type="file" accept="audio/*" hidden />
+          </div>
+        </header>
+
+        <div class="status-bay" aria-live="polite">
+          <span id="status-input">Standby</span>
+          <span class="status-meta">
+            <span id="status-rate">— Hz</span>
+            <span id="status-fft">FFT —</span>
+            <span id="status-df">Δf —</span>
+          </span>
         </div>
 
-        <div class="transport" role="toolbar" aria-label="Input">
-          <button class="rack-btn" id="btn-mic" type="button">
-            <i class="led led-bar" aria-hidden="true"></i>
-            <span>Listen</span>
-          </button>
-          <button class="rack-btn rack-btn-secondary" id="btn-tab" type="button" title="Capture tab audio">
-            <i class="led led-dot" aria-hidden="true"></i>
-            <span>Tab</span>
-          </button>
-          <button class="rack-btn" id="btn-file" type="button">
-            <i class="led led-dot" aria-hidden="true"></i>
-            <span>File</span>
-          </button>
-          <button class="rack-btn" id="btn-tone" type="button">
-            <i class="led led-dot" aria-hidden="true"></i>
-            <span>440</span>
-          </button>
-          <button class="rack-btn" id="btn-stop" type="button" disabled>
-            <i class="led led-dot" aria-hidden="true"></i>
-            <span>Stop</span>
-          </button>
-          <input id="file-input" type="file" accept="audio/*" hidden />
-        </div>
-      </header>
-
-      <div class="status-bay" aria-live="polite">
-        <span id="status-input">Standby</span>
-        <span class="status-meta">
-          <span id="status-rate">— Hz</span>
-          <span id="status-fft">FFT —</span>
-          <span id="status-df">Δf —</span>
-        </span>
+        <p class="honesty" id="notice" hidden></p>
       </div>
-
-      <p class="honesty" id="notice" hidden></p>
 
       <main class="console">
         <section class="instrument" id="scope">
@@ -72,53 +81,55 @@
           </div>
         </section>
 
-        <section class="metric-grid" aria-label="Readouts">
-          <article>
-            <span>Peak</span>
-            <i class="led led-round" aria-hidden="true"></i>
-            <strong id="readout-peak">—</strong>
-            <small id="readout-peak-db" class="sr-only">awaiting</small>
-          </article>
-          <article>
-            <span>Note</span>
-            <i class="led led-round" aria-hidden="true"></i>
-            <strong id="readout-note">—</strong>
-            <small id="readout-cents">A4 = 440</small>
-          </article>
-          <article>
-            <span>Centroid</span>
-            <i class="led led-round" aria-hidden="true"></i>
-            <strong id="readout-centroid">—</strong>
-          </article>
-          <article>
-            <span>RMS</span>
-            <i class="led led-round" aria-hidden="true"></i>
-            <strong id="readout-rms">—</strong>
-          </article>
-        </section>
+        <section class="lower-deck" aria-label="Readouts and measurement">
+          <div class="metric-grid">
+            <article>
+              <span>Peak</span>
+              <i class="led led-round" aria-hidden="true"></i>
+              <strong id="readout-peak">—</strong>
+              <small id="readout-peak-db" class="sr-only">awaiting</small>
+            </article>
+            <article>
+              <span>Note</span>
+              <i class="led led-round" aria-hidden="true"></i>
+              <strong id="readout-note">—</strong>
+              <small id="readout-cents" class="sr-only">A4 = 440</small>
+            </article>
+            <article>
+              <span>Centroid</span>
+              <i class="led led-round" aria-hidden="true"></i>
+              <strong id="readout-centroid">—</strong>
+            </article>
+            <article>
+              <span>RMS</span>
+              <i class="led led-round" aria-hidden="true"></i>
+              <strong id="readout-rms">—</strong>
+            </article>
+          </div>
 
-        <section class="controls-panel" aria-label="Measurement">
-          <label class="ctrl ctrl-fft">
-            <span>FFT</span>
-            <select id="fft-size">
-              <option value="2048">2048</option>
-              <option value="4096" selected>4096</option>
-              <option value="8192">8192</option>
-              <option value="16384">16384</option>
-            </select>
-          </label>
-          <label class="ctrl ctrl-slider">
-            <span>Gain <em id="gain-val">1.00</em></span>
-            <input id="gain" type="range" min="0.25" max="8" step="0.05" value="1" />
-          </label>
-          <label class="ctrl ctrl-slider">
-            <span>Smooth <em id="smoothing-val">0.72</em></span>
-            <input id="smoothing" type="range" min="0" max="0.95" step="0.01" value="0.72" />
-          </label>
-          <button class="hold-btn is-on" id="peak-hold" type="button" aria-pressed="true">
-            <i class="led led-square" aria-hidden="true"></i>
-            <span>Hold</span>
-          </button>
+          <div class="controls-panel">
+            <label class="ctrl ctrl-fft">
+              <span>FFT</span>
+              <select id="fft-size">
+                <option value="2048">2048</option>
+                <option value="4096" selected>4096</option>
+                <option value="8192">8192</option>
+                <option value="16384">16384</option>
+              </select>
+            </label>
+            <label class="ctrl ctrl-slider">
+              <span>Gain <em id="gain-val">1.00</em></span>
+              <input id="gain" type="range" min="0.25" max="8" step="0.05" value="1" />
+            </label>
+            <label class="ctrl ctrl-slider">
+              <span>Smooth <em id="smoothing-val">0.72</em></span>
+              <input id="smoothing" type="range" min="0" max="0.95" step="0.01" value="0.72" />
+            </label>
+            <button class="hold-btn is-on" id="peak-hold" type="button" aria-pressed="true">
+              <i class="led led-square" aria-hidden="true"></i>
+              <span>Hold</span>
+            </button>
+          </div>
         </section>
       </main>
     </div>
