@@ -1,11 +1,6 @@
 :root {
   /* lightly warmed silver panel */
-  --metal-hi: #e3dfd6;
-  --metal-up: #cfcbc2;
   --metal: #bcb8af;
-  --metal-mid: #aaa69d;
-  --metal-lo: #8f8b82;
-  --metal-deep: #726e66;
 
   --ink: #23211b;
   --label: #35322a;
@@ -21,7 +16,6 @@
   --lamp-off: #221d14;
 
   --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
-  --sans: "IBM Plex Sans", "Helvetica Neue", Helvetica, sans-serif;
   --script: "Great Vibes", "Segoe Script", cursive;
 
   --brush: url("/sonoscope/brushed-metal.png");
