@@ -153,13 +153,16 @@ function demoBands(count: number, t: number): { bands: Band[]; hold: number[] } 
     const fLo = Math.exp(Math.log(F_MIN) + t0 * (Math.log(F_MAX) - Math.log(F_MIN)))
     const fHi = Math.exp(Math.log(F_MIN) + t1 * (Math.log(F_MAX) - Math.log(F_MIN)))
     const fCenter = Math.sqrt(fLo * fHi)
-    // Low-end room noise like the reference capture
-    const low = Math.exp(-Math.pow(Math.log(fCenter / 45) / 0.85, 2))
-    const mid = 0.18 * Math.exp(-Math.pow(Math.log(fCenter / 180) / 0.55, 2))
-    const hiss = 0.04 * Math.exp(-Math.pow(Math.log(fCenter / 6000) / 1.1, 2))
-    const wobble = 0.08 * Math.sin(t * 0.0017 + i * 0.35)
-    const db = -90 + (low * 22 + mid * 10 + hiss * 6 + wobble) * (0.85 + 0.15 * Math.sin(t * 0.0009 + i))
-    return { fLo, fHi, fCenter, db: Math.min(-68, db) }
+    // Low-end room noise like the reference capture: a rumble hump under 100 Hz,
+    // sparse traffic through the low mids, silence above it.
+    const low = Math.exp(-Math.pow(Math.log(fCenter / 42) / 0.62, 2))
+    const mid = 0.34 * Math.exp(-Math.pow(Math.log(fCenter / 165) / 0.42, 2))
+    const spot = 0.26 * Math.exp(-Math.pow(Math.log(fCenter / 340) / 0.16, 2))
+    const wobble = 0.06 * Math.sin(t * 0.0017 + i * 0.35)
+    const lift = (low * 22 + mid * 13 + spot * 9 + wobble) * (0.88 + 0.12 * Math.sin(t * 0.0009 + i))
+    // Anything that never rises off the floor stays off the floor.
+    const db = lift < 1.4 ? -Infinity : Math.min(-68, -90 + lift)
+    return { fLo, fHi, fCenter, db }
   })
   const hold = bands.map((b, i) => b.db + 1.5 + ((i * 17) % 5) * 0.35)
   return { bands, hold }
