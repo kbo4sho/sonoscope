@@ -151,9 +151,9 @@ select {
     auto, auto, auto, auto,
     auto, auto, auto, auto, auto, auto,
     auto,
-    780px 1180px,
-    160px 160px,
-    100% 28%;
+    900px 1400px,
+    140px 140px,
+    100% 22%;
   background-position:
     0 0, 0 0, 0 0, 0 0,
     0 0, 0 0, 0 0, 0 0, 0 0, 0 0,
@@ -173,7 +173,7 @@ select {
     normal, normal, normal, normal, normal, normal,
     normal,
     soft-light,
-    soft-light,
+    overlay,
     normal;
   overflow: hidden;
   /* hard cabinet contact — no soft floating drop */
