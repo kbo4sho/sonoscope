@@ -1,6 +1,6 @@
 :root {
-  /* lightly warmed silver panel */
-  --metal: #bcb8af;
+  /* lightly warmed silver panel — matched to reference mean ~187 */
+  --metal: #c9c4ba;
 
   --ink: #23211b;
   --label: #35322a;
@@ -101,9 +101,10 @@ select {
 .cabinet {
   min-height: 100dvh;
   max-height: 100dvh;
-  padding: 0;
+  padding: 10px 8px calc(12px + var(--safe-bottom));
   display: flex;
-  background: #12100c;
+  background:
+    linear-gradient(90deg, #1a1410 0%, #2a221c 18%, #2c241e 82%, #16120e 100%);
 }
 
 /* ——————————————————————— chassis ——————————————————————— */
@@ -126,12 +127,12 @@ select {
     var(--brush),
     linear-gradient(
       180deg,
-      #cec2b9 0%,
-      #b4aaa1 10%,
-      #b0a69e 32%,
-      #bfb4ab 62%,
-      #bab0a7 80%,
-      #958c86 100%
+      #ddd4c9 0%,
+      #c9c0b5 12%,
+      #c4bbb1 34%,
+      #d0c7bc 62%,
+      #cbc2b8 82%,
+      #aea59c 100%
     );
   background-size: auto, auto, auto, auto, auto, 180px 180px, auto;
   background-blend-mode: normal, normal, normal, normal, normal, soft-light, normal;
@@ -318,9 +319,9 @@ select {
 }
 
 .rb-name {
-  font-size: 8.5px;
+  font-size: 8px;
   font-weight: 500;
-  letter-spacing: 0.13em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   text-align: center;
   color: var(--label);
@@ -362,16 +363,16 @@ select {
   display: block;
   flex: 1 1 auto;
   border-radius: 2px;
-  background-color: #b0aa9d;
+  background-color: #3a3a3c;
   background-image:
-    linear-gradient(168deg, rgba(255, 255, 255, 0.34) 0%, rgba(255, 255, 255, 0.06) 44%, rgba(0, 0, 0, 0.08) 72%, rgba(0, 0, 0, 0.2) 100%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 40%, rgba(0, 0, 0, 0.25) 100%),
     var(--brush);
-  background-size: auto, 74px 74px;
-  background-blend-mode: normal, soft-light;
+  background-size: auto, 90px 90px;
+  background-blend-mode: soft-light, soft-light;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.42),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.24),
-    0 1px 2px rgba(0, 0, 0, 0.5);
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.35),
+    0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 .rack-btn:hover:not(:disabled) .rb-cap {
