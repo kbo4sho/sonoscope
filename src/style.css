@@ -334,14 +334,15 @@ select {
   content: "";
   position: absolute;
   left: 50%;
-  top: 6px;
-  width: 160%;
-  height: 120%;
+  top: 4px;
+  width: 140%;
+  height: 110%;
   transform: translateX(-50%);
   pointer-events: none;
   opacity: 0;
+  z-index: 0;
   mix-blend-mode: screen;
-  background: radial-gradient(ellipse 48% 36% at 50% 18%, rgba(255, 178, 78, 0.42), rgba(255, 150, 20, 0) 72%);
+  background: radial-gradient(ellipse 42% 28% at 50% 14%, rgba(255, 178, 78, 0.28), rgba(255, 150, 20, 0) 70%);
   transition: opacity 0.16s ease;
 }
 
@@ -350,6 +351,8 @@ select {
 }
 
 .rb-name {
+  position: relative;
+  z-index: 1;
   font-size: 8px;
   font-weight: 500;
   letter-spacing: 0.12em;
@@ -361,25 +364,28 @@ select {
 }
 
 .rack-btn .led-dot {
+  position: relative;
+  z-index: 1;
   align-self: center;
 }
 
-/* Active latch: light the jewel LED above the switch — housing height stays fixed. */
+/* Active latch: light the jewel LED above the switch — housing height stays fixed.
+   Keep LED box size identical to idle so flex-end transport row does not shift. */
 .rack-btn.is-active .led-dot {
-  width: 4.5px;
-  height: 4.5px;
   background: radial-gradient(circle at 38% 30%, #fff8e8 0%, #ffd58a 28%, var(--amber) 58%, var(--amber-deep) 100%);
   box-shadow:
     0 0 2px rgba(255, 210, 120, 0.95),
     0 0 5px rgba(255, 154, 20, 1),
-    0 0 11px rgba(255, 138, 12, 0.7),
-    inset 0 0 1.5px rgba(255, 248, 230, 0.95);
+    0 0 10px rgba(255, 138, 12, 0.65),
+    inset 0 0 1px rgba(255, 248, 230, 0.95);
 }
 
 /* The cap sits in a black surround that shows most at the bottom, and the whole
    assembly throws a soft contact shadow down onto the panel. */
 /* Transport: dark recessed push-buttons (Listen / File / 440 / Stop). */
 .rb-housing {
+  position: relative;
+  z-index: 1;
   display: block;
   height: 22px;
   padding: 2px;
