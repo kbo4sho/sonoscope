@@ -1,11 +1,11 @@
 :root {
   /* lightly warmed silver panel — matched to reference mean ~187 */
-  --metal: #c9c4ba;
+  --metal: #b5aea4;
 
   --ink: #23211b;
   --label: #35322a;
   --engrave: rgba(255, 255, 255, 0.42);
-  --seam-dark: rgba(22, 19, 12, 0.42);
+  --seam-dark: rgba(22, 19, 12, 0.58);
   --seam-lite: rgba(255, 255, 255, 0.2);
 
   --amber: #ff9a14;
@@ -101,10 +101,16 @@ select {
 .cabinet {
   min-height: 100dvh;
   max-height: 100dvh;
-  padding: 10px 8px calc(12px + var(--safe-bottom));
+  padding: 14px 10px calc(14px + var(--safe-bottom));
   display: flex;
-  background:
-    linear-gradient(90deg, #1a1410 0%, #2a221c 18%, #2c241e 82%, #16120e 100%);
+  background-color: #3d2818;
+  background-image:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.4) 0%, rgba(255, 220, 170, 0.06) 45%, rgba(0, 0, 0, 0.35) 100%),
+    linear-gradient(90deg, #2a1a10 0%, #4a3220 22%, #523826 50%, #3d2818 78%, #24160e 100%),
+    var(--wood);
+  background-size: auto, auto, 160px 320px;
+  background-blend-mode: overlay, normal, soft-light;
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.45);
 }
 
 /* ——————————————————————— chassis ——————————————————————— */
@@ -127,12 +133,12 @@ select {
     var(--brush),
     linear-gradient(
       180deg,
-      #ddd4c9 0%,
-      #c9c0b5 12%,
-      #c4bbb1 34%,
-      #d0c7bc 62%,
-      #cbc2b8 82%,
-      #aea59c 100%
+      #c4bbb0 0%,
+      #b0a79c 12%,
+      #aba299 34%,
+      #b8afa4 62%,
+      #b3aa9f 82%,
+      #968d84 100%
     );
   background-size: auto, auto, auto, auto, auto, 220px 220px, auto;
   background-blend-mode: normal, normal, normal, normal, soft-light, overlay, normal;
