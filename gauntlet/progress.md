@@ -34,7 +34,16 @@
 - Verdict: lost (bar = A, ours = B)
 - Gap: Replace uniform pinstriped surface with irregular brushing, recessed seams, and physically shaded controls.
 - Evidence: `gauntlet/rounds/r3-pair-*.jpg`
-- Route: critic gpt-5.6-sol-xhigh
 
 ### whole-frame round 4
-- Status: climbing — bitmap metal texture + engraved seams + shaded switches
+- Verdict: lost (ours = A, bar = B)
+- Gap: Physically layered controls and irregular aged-metal shading instead of flat panels.
+- Evidence: `gauntlet/rounds/r4-pair-*.jpg`
+
+### whole-frame round 5
+- Verdict: lost (bar = A, ours = B)
+- Gap: Subtler controls, deeper inset framing, irregular brushed-metal vs oversized glossy buttons.
+- Evidence: `gauntlet/rounds/r5-pair-*.jpg`
+
+### whole-frame round 6
+- Status: climbing — 4-button face, quiet status bay, retextured metal, flatter switches
