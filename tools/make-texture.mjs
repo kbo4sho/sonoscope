@@ -241,8 +241,8 @@ function fbm(baseW, baseH, octaves, gain = 0.5) {
       const dv = v + warpV(u * 1.3, v * 0.7) * 0.06
       const c = cloud(du, dv)
       // bias dark so the map mostly darkens, with occasional polished bright patches
-      const stain = c > 0 ? c * 0.75 : c * 1.35
-      out[y * W + x] = 128 + stain * 46 + fineDirt(u, v) * 11 + (rnd() - 0.5) * 3
+      const stain = c > 0 ? c * 0.7 : c * 1.45
+      out[y * W + x] = 128 + stain * 50 + fineDirt(u, v) * 16 + (rnd() - 0.5) * 3
     }
   }
 

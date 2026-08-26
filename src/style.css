@@ -134,10 +134,11 @@ select {
     linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0px, rgba(255, 255, 255, 0) 3px),
     linear-gradient(0deg, rgba(14, 9, 4, 0.62) 0px, rgba(14, 9, 4, 0) 4px),
     /* grime that has crept in from the rack ears and settled unevenly */
-    radial-gradient(ellipse 52% 18% at 6% 1%, rgba(48, 36, 20, 0.17), rgba(48, 36, 20, 0) 74%),
-    radial-gradient(ellipse 34% 26% at 105% 32%, rgba(42, 31, 17, 0.2), rgba(42, 31, 17, 0) 72%),
-    radial-gradient(ellipse 58% 14% at 80% 101%, rgba(38, 28, 15, 0.2), rgba(38, 28, 15, 0) 78%),
-    radial-gradient(ellipse 22% 18% at -6% 66%, rgba(44, 33, 18, 0.16), rgba(44, 33, 18, 0) 74%),
+    radial-gradient(ellipse 46% 15% at 4% 0%, rgba(48, 36, 20, 0.2), rgba(48, 36, 20, 0) 74%),
+    radial-gradient(ellipse 26% 9% at 96% 3%, rgba(40, 29, 15, 0.3), rgba(40, 29, 15, 0) 68%),
+    radial-gradient(ellipse 30% 24% at 105% 30%, rgba(42, 31, 17, 0.26), rgba(42, 31, 17, 0) 72%),
+    radial-gradient(ellipse 58% 14% at 80% 101%, rgba(38, 28, 15, 0.24), rgba(38, 28, 15, 0) 78%),
+    radial-gradient(ellipse 22% 18% at -6% 66%, rgba(44, 33, 18, 0.2), rgba(44, 33, 18, 0) 74%),
     /* burnished patch where a hand has rested for thirty years */
     radial-gradient(ellipse 34% 12% at 30% 88%, rgba(255, 250, 238, 0.13), rgba(255, 250, 238, 0) 70%),
     /* key light high and a little to the left; both machined edges fall into shade */
@@ -156,21 +157,21 @@ select {
     );
   background-size:
     auto, auto, auto, auto,
-    auto, auto, auto, auto, auto,
+    auto, auto, auto, auto, auto, auto,
     auto, auto,
     780px 1180px,
-    512px 512px,
+    390px 390px,
     auto;
   background-position:
     0 0, 0 0, 0 0, 0 0,
-    0 0, 0 0, 0 0, 0 0, 0 0,
+    0 0, 0 0, 0 0, 0 0, 0 0, 0 0,
     0 0, 0 0,
     -90px -140px,
     0 0,
     0 0;
   background-blend-mode:
     normal, normal, normal, normal,
-    normal, normal, normal, normal, normal,
+    normal, normal, normal, normal, normal, normal,
     normal, soft-light,
     soft-light,
     overlay,
@@ -426,7 +427,7 @@ select {
     linear-gradient(270deg, rgba(24, 18, 10, 0.24) 0px, rgba(24, 18, 10, 0) 3px),
     var(--wear),
     var(--brush),
-    linear-gradient(180deg, #ccc5b9 0%, #b1a99b 44%, #948d7f 100%);
+    linear-gradient(180deg, #b9b2a6 0%, #9e9688 44%, #837c6e 100%);
   background-size: auto, auto, auto, auto, 130px 90px, 150px 150px, auto;
   background-position: 0 0, 0 0, 0 0, 0 0, -20px -25px, 0 0, 0 0;
   background-blend-mode: normal, normal, normal, normal, soft-light, overlay, normal;
@@ -523,7 +524,8 @@ select {
     inset 0 -1px 0 rgba(255, 236, 200, 0.14),
     0 1px 0 rgba(255, 255, 255, 0.55),
     0 2px 4px rgba(0, 0, 0, 0.4),
-    0 0 9px 3px rgba(44, 32, 17, 0.42);
+    0 0 9px 3px rgba(44, 32, 17, 0.42),
+    0 4px 14px rgba(20, 12, 6, 0.35);
 }
 
 .bay-glass {
@@ -633,15 +635,15 @@ select {
   border-radius: 7px;
   background: #1a1a15;
   box-shadow:
-    inset 0 9px 10px -4px rgba(28, 20, 10, 0.95),
-    inset 0 -6px 9px -4px rgba(16, 12, 6, 0.85),
-    inset 8px 0 11px -6px rgba(26, 19, 10, 0.9),
-    inset -8px 0 11px -6px rgba(26, 19, 10, 0.9),
-    inset 0 0 0 1px rgba(0, 0, 0, 0.95),
-    0 0 0 1.5px rgba(44, 32, 17, 0.75),
-    0 1px 4px 1px rgba(38, 27, 13, 0.62),
-    0 3px 11px 3px rgba(42, 31, 16, 0.4),
-    0 6px 20px 7px rgba(44, 33, 18, 0.2);
+    inset 0 11px 14px -3px rgba(12, 8, 4, 0.98),
+    inset 0 -8px 12px -3px rgba(10, 7, 3, 0.9),
+    inset 10px 0 14px -5px rgba(18, 12, 6, 0.95),
+    inset -10px 0 14px -5px rgba(18, 12, 6, 0.95),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.98),
+    0 0 0 1.5px rgba(44, 32, 17, 0.8),
+    0 2px 6px 1px rgba(28, 18, 8, 0.7),
+    0 5px 16px 4px rgba(32, 22, 10, 0.48),
+    0 10px 28px 8px rgba(36, 24, 12, 0.28);
   overflow: hidden;
 }
 
