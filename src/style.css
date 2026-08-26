@@ -1003,7 +1003,7 @@ select {
   }
 
   .rack-btn {
-    flex: 0 1 60px;
+    max-width: 60px;
   }
 }
 
