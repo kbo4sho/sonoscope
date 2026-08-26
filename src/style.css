@@ -134,8 +134,8 @@ select {
       #cbc2b8 82%,
       #aea59c 100%
     );
-  background-size: auto, auto, auto, auto, auto, 180px 180px, auto;
-  background-blend-mode: normal, normal, normal, normal, normal, soft-light, normal;
+  background-size: auto, auto, auto, auto, auto, 220px 220px, auto;
+  background-blend-mode: normal, normal, normal, normal, soft-light, overlay, normal;
   overflow: hidden;
   box-shadow:
     0 2px 7px rgba(0, 0, 0, 0.55),
