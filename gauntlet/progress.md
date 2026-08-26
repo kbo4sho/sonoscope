@@ -30,8 +30,11 @@
 - Gap: Rebuild panel at full-frame scale with deep bevels, textured metal, tactile controls, and stronger hardware shadows.
 - Evidence: `gauntlet/rounds/r1-pair-*.jpg`
 
-### whole-frame round 2
-- Verdict: lost (ours = A, bar = B)
-- Gap: Replace oversized glossy plastic controls and sterile uniform surfaces with compact hardware-scale switches, deeper panel recesses, and subtle material wear.
-- Evidence: `gauntlet/rounds/r2-pair-*.jpg`
+### whole-frame round 3
+- Verdict: lost (bar = A, ours = B)
+- Gap: Replace uniform pinstriped surface with irregular brushing, recessed seams, and physically shaded controls.
+- Evidence: `gauntlet/rounds/r3-pair-*.jpg`
 - Route: critic gpt-5.6-sol-xhigh
+
+### whole-frame round 4
+- Status: climbing — bitmap metal texture + engraved seams + shaded switches

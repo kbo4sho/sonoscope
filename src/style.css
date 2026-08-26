@@ -110,15 +110,18 @@ select {
   display: flex;
   flex-direction: column;
   position: relative;
-  background:
-    var(--brush),
+  background-color: var(--metal);
+  background-image:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, transparent 18%, transparent 82%, rgba(0, 0, 0, 0.22) 100%),
     var(--wear),
-    linear-gradient(180deg, var(--metal-hi) 0%, var(--metal) 40%, var(--metal-mid) 78%, var(--metal-lo) 100%);
+    url("/sonoscope/metal-brush.png");
+  background-size: auto, auto, 280px 560px;
+  background-blend-mode: soft-light, normal, normal;
   box-shadow:
-    inset 0 2px 0 rgba(255, 255, 255, 0.45),
-    inset 0 -4px 10px rgba(0, 0, 0, 0.35),
-    inset 18px 0 28px rgba(0, 0, 0, 0.14),
-    inset -18px 0 28px rgba(0, 0, 0, 0.14);
+    inset 0 2px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -4px 12px rgba(0, 0, 0, 0.4),
+    inset 22px 0 32px rgba(0, 0, 0, 0.16),
+    inset -22px 0 32px rgba(0, 0, 0, 0.16);
 }
 
 .chassis::before {
@@ -247,12 +250,15 @@ select {
   border: 1px solid #050506;
   border-radius: 3px;
   background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.08) 0%, transparent 42%),
     linear-gradient(180deg, var(--btn-hi) 0%, var(--btn-face) 48%, var(--btn-lo) 100%);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.12),
-    inset 0 -2px 3px rgba(0, 0, 0, 0.55),
-    0 1px 2px rgba(0, 0, 0, 0.4),
-    0 1px 0 rgba(255, 255, 255, 0.18);
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    inset 0 -3px 4px rgba(0, 0, 0, 0.6),
+    inset 2px 0 3px rgba(0, 0, 0, 0.25),
+    inset -2px 0 3px rgba(0, 0, 0, 0.25),
+    0 2px 3px rgba(0, 0, 0, 0.45),
+    0 1px 0 rgba(255, 255, 255, 0.16);
   color: #d2d2ce;
   font-size: 8px;
   font-weight: 700;
@@ -343,16 +349,18 @@ select {
   gap: 0;
   position: relative;
   z-index: 1;
-  border: 1px solid rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(0, 0, 0, 0.55);
   border-radius: 3px;
-  background:
-    var(--brush),
-    var(--wear),
-    linear-gradient(180deg, #b4b4b8 0%, #94949a 100%);
+  background-color: #9e9ea4;
+  background-image:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.14), transparent 24%, transparent 76%, rgba(0, 0, 0, 0.18)),
+    url("/sonoscope/metal-brush.png");
+  background-size: auto, 240px 480px;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.35),
-    inset 0 -2px 8px rgba(0, 0, 0, 0.22),
-    0 4px 14px rgba(0, 0, 0, 0.3);
+    inset 0 1px 0 rgba(255, 255, 255, 0.32),
+    inset 0 -2px 8px rgba(0, 0, 0, 0.28),
+    0 0 0 1px rgba(255, 255, 255, 0.12),
+    0 5px 16px rgba(0, 0, 0, 0.34);
   overflow: hidden;
 }
 
@@ -414,11 +422,15 @@ select {
 
 .lower-deck {
   flex: 0 0 auto;
-  border-top: 1px solid rgba(0, 0, 0, 0.38);
-  background:
-    var(--brush),
-    linear-gradient(180deg, #a8a8ac 0%, #8c8c92 100%);
-  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.18);
+  border-top: 1px solid rgba(0, 0, 0, 0.45);
+  background-color: #8f8f95;
+  background-image:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 30%),
+    url("/sonoscope/metal-brush.png");
+  background-size: auto, 220px 440px;
+  box-shadow:
+    inset 0 3px 6px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
 .metric-grid {
@@ -431,8 +443,11 @@ select {
   position: relative;
   min-height: 48px;
   padding: 8px 10px 8px 30px;
-  border-right: 1px solid rgba(0, 0, 0, 0.28);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.28);
+  border-right: 1px solid rgba(0, 0, 0, 0.38);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.38);
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
   display: flex;
   flex-direction: column;
   justify-content: center;
