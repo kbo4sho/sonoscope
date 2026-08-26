@@ -13,20 +13,33 @@
 | Role | Tier | Model |
 |---|---|---|
 | Lead | T3 | session |
-| Builder (visual) | T3 | gpt-5.6-sol-xhigh / lead |
 | Critic (taste) | T3 | gpt-5.6-sol-xhigh |
-| Scribe / mechanical | T1 | composer-2.5-fast |
-| Screenshots | T0 | computerUse / playwright |
+| Screenshots | T0 | playwright / computerUse |
 
-**Budget:** lean — one piece, up to ~4 critic rounds, stop when critic picks fixed geometry + lit LED over tall rocker / when gains stop.
+**Budget:** lean — one piece. Stop when critic clears bar.
 
-## Status
+## Round log
 
 | Round | Result | Gap |
 |---|---|---|
-| 0 | diagnosis | tall rocker via height:28px + hidden LED |
-| 1 | **won** (critic: right=ours) | jewel not bright/amber enough |
-| 2 | building | brighter amber jewel |
+| 0 | diagnosis | `.is-active` set housing `height:28px` + hid `.led-dot` + chamber lamp |
+| 1 | **won** (pair right=ours) | jewel not bright enough |
+| 2 | polish | brighter LED; wash was covering jewel / size change shifted flex-end row |
+| 3–4 | **cleared** | DOM: mic=file housing 22px same top; LED 3.5px amber when active. Critic: pair left=ours, R4 cleared, gap none |
 
-Pixel check r1: Listen housing ~14px same as siblings (active & idle).
-Artifacts: `/opt/cursor/artifacts/listen-*-r1.png`, pairs in `gauntlet/listen-btn/`.
+## Stop
+
+**Condition 2:** per-round gains stopped; critic cleared the bar (fixed geometry + lit LED vs tall rocker).
+
+## Assumptions
+
+- Best realism = light existing jewel LED, not a tall rocker latch.
+- Subtle pressed-in cap when latched is OK.
+- Demo mode `/?demo=1` is the inspection path (mic permission not required).
+
+## Artifacts
+
+- `/opt/cursor/artifacts/listen_active_led_fixed.png`
+- `/opt/cursor/artifacts/listen_idle_aligned.png`
+- `/opt/cursor/artifacts/listen_faceplate_active_fixed.png`
+- Pairs: `gauntlet/listen-btn/`
